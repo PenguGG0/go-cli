@@ -1,9 +1,3 @@
-/**
- * Created by Pengu_GG at 2025/06/22 22:01:49
- * @Software: GoLand
- * @desc:
- */
-
 package main
 
 import (

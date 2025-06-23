@@ -1,9 +1,4 @@
-/**
- * Created by Pengu_GG at 2025/06/22 21:24:35
- * @Software: GoLand
- * @desc:
- */
-
+// Word counter
 package main
 
 import (
