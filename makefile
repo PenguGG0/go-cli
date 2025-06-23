@@ -9,8 +9,9 @@ help:
 # BUILD
 # ==================================================================================== #
 
+# check the time with 'bin/xxx.exe --build-time'
 current_time = $(shell powershell -Command "Get-Date -Format 'yyyy-MM-ddTHH:mm:ss'")
-linker_flags = '-s -X main.buildTime=$(current_time)'
+linker_flags = '-s'
 
 ## build/wc: build cmd/wc to bin/wc.exe
 build/wc:
