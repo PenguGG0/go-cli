@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_count(t *testing.T) {
+func TestCount(t *testing.T) {
 	tests := []struct {
 		name       string
 		r          io.Reader

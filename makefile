@@ -17,3 +17,8 @@ linker_flags = '-s'
 build/wc:
 	@echo "Building cmd/wc..."
 	go build -ldflags=$(linker_flags) -o=./bin/wc.exe ./cmd/wc
+
+## build/todo: build cmd/todo to bin/todo.exe
+build/todo:
+	@echo "Building cmd/todo..."
+	go build -ldflags=$(linker_flags) -o=./bin/todo.exe ./cmd/todo

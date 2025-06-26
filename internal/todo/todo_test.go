@@ -7,7 +7,7 @@ import (
 	"github.com/PenguGG0/go-cli/internal/todo"
 )
 
-func TestList_Add(t *testing.T) {
+func TestListAdd(t *testing.T) {
 	tests := []struct {
 		name     string
 		l        todo.List
@@ -33,7 +33,7 @@ func TestList_Add(t *testing.T) {
 	}
 }
 
-func TestList_Complete(t *testing.T) {
+func TestListComplete(t *testing.T) {
 	tests := []struct {
 		name     string
 		l        todo.List
@@ -65,7 +65,7 @@ func TestList_Complete(t *testing.T) {
 	}
 }
 
-func TestList_Delete(t *testing.T) {
+func TestListDelete(t *testing.T) {
 	tests := []struct {
 		name  string
 		l     todo.List
@@ -102,7 +102,7 @@ func TestList_Delete(t *testing.T) {
 	}
 }
 
-func TestList_SaveGet(t *testing.T) {
+func TestListSaveGet(t *testing.T) {
 	tests := []struct {
 		name     string
 		l1       todo.List
