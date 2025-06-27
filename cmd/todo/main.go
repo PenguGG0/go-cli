@@ -2,10 +2,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
-	"strings"
+	"path/filepath"
 
 	"github.com/PenguGG0/go-cli/internal/todo"
 )
@@ -13,26 +14,50 @@ import (
 const todoFileName = ".todo.json"
 
 func main() {
+	task := flag.String("task", "", "Task to be included in the ToDo list")
+	list := flag.Bool("list", false, "List all tasks")
+	complete := flag.Int("complete", 0, "Item to be completed")
+
+	flag.Usage = func() {
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "%s tool. Developed by Pengu_GG\n", filepath.Base(os.Args[0]))
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Copyright 2025\n")
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Usage information:\n")
+		flag.PrintDefaults()
+	}
+
+	flag.Parse()
+
 	l := todo.List{}
 
+	// read from the todoFile
 	if err := l.Get(todoFileName); err != nil {
 		log.Fatalln(err)
 	}
 
 	switch {
-	// For no extra arguments, list the to-do items
-	case len(os.Args) == 1:
+	// if -list flag is set, list the to-do items
+	case *list:
 		for _, item := range l {
-			fmt.Println(item.Task)
+			if !item.Done {
+				fmt.Println(item.Task)
+			}
 		}
-	// Concatenate all provided arguments with a space
-	// Add it to the list and save the new list
-	default:
-		item := strings.Join(os.Args[1:], " ")
-		l.Add(item)
+	// if -complete flag is set, complete the item according to the given value and save
+	case *complete > 0:
+		if err := l.Complete(*complete); err != nil {
+			log.Fatalln(err)
+		}
 		if err := l.Save(todoFileName); err != nil {
 			log.Fatalln(err)
 		}
+	// if it's followed by a task string, add the task to l and save
+	case *task != "":
+		l.Add(*task)
+		if err := l.Save(todoFileName); err != nil {
+			log.Fatalln(err)
+		}
+	// if there's no argument, return an error
+	default:
+		log.Fatalln("Invalid option")
 	}
-
 }
