@@ -10,7 +10,7 @@ import (
 )
 
 type Stringer interface {
-	String() string
+	String(onlyShowPending bool) string
 }
 
 type item struct {
@@ -77,12 +77,15 @@ func (l *List) Get(fileName string) error {
 	return json.Unmarshal(file, l)
 }
 
-func (l *List) String() string {
+func (l *List) String(onlyShowPending bool) string {
 	formatted := ""
 
 	for k, t := range *l {
 		prefix := "     "
 		if t.Done {
+			if onlyShowPending {
+				continue
+			}
 			prefix = "Done "
 		}
 

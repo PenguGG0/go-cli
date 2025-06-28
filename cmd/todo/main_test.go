@@ -12,11 +12,15 @@ import (
 )
 
 var (
-	binName  = "todo"
-	fileName = ".todo.json"
+	binName      = "todo"
+	testFileName = ".todoTest.json"
 )
 
 func TestMain(m *testing.M) {
+	if err := os.Setenv("TODO_FILENAME", testFileName); err != nil {
+		log.Fatalln(err)
+	}
+
 	fmt.Println("test: Building tool...")
 	if runtime.GOOS == "windows" {
 		binName += ".exe"
@@ -31,7 +35,7 @@ func TestMain(m *testing.M) {
 
 	fmt.Println("test: Cleaning up...")
 	_ = os.Remove(binName)
-	_ = os.Remove(fileName)
+	_ = os.Remove(testFileName)
 
 	os.Exit(result)
 }
@@ -55,6 +59,7 @@ func TestTodoCLI(t *testing.T) {
 	})
 
 	testTask2 := "test task number 2"
+	testTask3 := "test task number 3"
 
 	t.Run("AddNewTaskFromSTDIN", func(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-add")
@@ -63,7 +68,7 @@ func TestTodoCLI(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		_, err = io.WriteString(cmdStdIn, testTask2)
+		_, err = io.WriteString(cmdStdIn, testTask2+"\n"+testTask3)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -100,7 +105,7 @@ func TestTodoCLI(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		expected := fmt.Sprintf("Done 1: %s\n", testTask1)
+		expected := fmt.Sprintf("Done 1: %s\n     2: %s\n", testTask1, testTask3)
 		if expected != string(out) {
 			t.Errorf("Expected %v, got %v instead\n", expected, string(out))
 		}
