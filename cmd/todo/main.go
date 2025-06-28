@@ -11,9 +11,13 @@ import (
 	"github.com/PenguGG0/go-cli/internal/todo"
 )
 
-const todoFileName = ".todo.json"
-
 func main() {
+	var todoFileName = ".todo.json"
+
+	if os.Getenv("TODO_FILENAME") != "" {
+		todoFileName = os.Getenv("TODO_FILENAME")
+	}
+
 	task := flag.String("task", "", "Task to be included in the ToDo list")
 	list := flag.Bool("list", false, "List all tasks")
 	complete := flag.Int("complete", 0, "Item to be completed")
@@ -37,11 +41,7 @@ func main() {
 	switch {
 	// if -list flag is set, list the to-do items
 	case *list:
-		for _, item := range l {
-			if !item.Done {
-				fmt.Println(item.Task)
-			}
-		}
+		fmt.Print(l.String())
 	// if -complete flag is set, complete the item according to the given value and save
 	case *complete > 0:
 		if err := l.Complete(*complete); err != nil {

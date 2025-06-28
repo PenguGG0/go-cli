@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+type Stringer interface {
+	String() string
+}
+
 type item struct {
 	Task        string
 	Done        bool
@@ -71,4 +75,19 @@ func (l *List) Get(fileName string) error {
 		return nil
 	}
 	return json.Unmarshal(file, l)
+}
+
+func (l *List) String() string {
+	formatted := ""
+
+	for k, t := range *l {
+		prefix := "     "
+		if t.Done {
+			prefix = "Done "
+		}
+
+		formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+	}
+
+	return formatted
 }
