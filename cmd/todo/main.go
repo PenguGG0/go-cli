@@ -40,6 +40,7 @@ func main() {
 	add := flag.Bool("add", false, "Add task to the ToDo list")
 	list := flag.Bool("list", false, "List all tasks")
 	complete := flag.Int("complete", 0, "Item to be completed")
+	del := flag.Int("del", 0, "Item to be deleted")
 
 	flag.Usage = func() {
 		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "%s tool. Developed by Pengu_GG\n", filepath.Base(os.Args[0]))
@@ -61,9 +62,17 @@ func main() {
 	// if -list flag is set, list the to-do items
 	case *list:
 		fmt.Print(l.String())
-	// if -complete flag is set, complete the item according to the given value and save
+	// if -complete flag is set, complete the specified item by number
 	case *complete > 0:
 		if err := l.Complete(*complete); err != nil {
+			log.Fatalln(err)
+		}
+		if err := l.Save(todoFileName); err != nil {
+			log.Fatalln(err)
+		}
+	// if -del flag is set, delete the specified item by number
+	case *del > 0:
+		if err := l.Delete(*del); err != nil {
 			log.Fatalln(err)
 		}
 		if err := l.Save(todoFileName); err != nil {
