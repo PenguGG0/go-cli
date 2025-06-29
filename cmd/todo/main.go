@@ -37,7 +37,7 @@ func getTask(r io.Reader, args ...string) ([]string, error) {
 }
 
 func main() {
-	var todoFileName = ".todo.json"
+	var todoFileName = "./tmp/.todo.json"
 
 	if os.Getenv("TODO_FILENAME") != "" {
 		todoFileName = os.Getenv("TODO_FILENAME")

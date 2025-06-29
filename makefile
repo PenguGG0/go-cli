@@ -1,4 +1,4 @@
-.PHONY: help build/wc
+.PHONY: help build/wc build/todo build/mdp
 
 ## help: print this help message
 help:
@@ -22,3 +22,8 @@ build/wc:
 build/todo:
 	@echo "Building cmd/todo..."
 	go build -ldflags=$(linker_flags) -o=./bin/todo.exe ./cmd/todo
+
+## build/mdp: build cmd/mdp to bin/mdp.exe
+build/mdp:
+	@echo "Building cmd/mdp..."
+	go build -ldflags=$(linker_flags) -o=./bin/mdp.exe ./cmd/mdp
