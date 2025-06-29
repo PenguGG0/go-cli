@@ -8,16 +8,16 @@ import (
 
 const (
 	inputFile  = "./testdata/test1.md"
-	resultFile = "./tmp/test1.md.html"
 	goldenFile = "./testdata/test1.md.html"
 )
 
 func TestRun(t *testing.T) {
-	if err := run(inputFile, true); err != nil {
+	outName, err := run(inputFile)
+	if err != nil {
 		t.Fatal(err)
 	}
 
-	result, err := os.ReadFile(resultFile)
+	result, err := os.ReadFile(outName)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func TestRun(t *testing.T) {
 		t.Logf("result:\n%s\n", result)
 		t.Error("Result content does not match golden file")
 	}
-	err = os.Remove(resultFile)
+	err = os.Remove(outName)
 	if err != nil {
 		t.Fatal(err)
 	}

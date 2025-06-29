@@ -34,7 +34,10 @@ func renderToFile(outputFile *os.File, body template.HTML) error {
 	}
 
 	// Render the template with the html body and write it to the output file
-	err = tmpl.ExecuteTemplate(outputFile, "base", &templateData{Body: body})
+	err = tmpl.ExecuteTemplate(outputFile, "base", &templateData{
+		Title: "Markdown Preview Tool",
+		Body:  body,
+	})
 	if err != nil {
 		return err
 	}

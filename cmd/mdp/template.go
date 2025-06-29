@@ -9,7 +9,8 @@ import (
 )
 
 type templateData struct {
-	Body template.HTML
+	Title string
+	Body  template.HTML
 }
 
 func newTemplateCache() (map[string]*template.Template, error) {

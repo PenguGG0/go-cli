@@ -6,38 +6,35 @@ import (
 	"html/template"
 	"log"
 	"os"
-	"path/filepath"
 )
 
-func run(inputFileName string, skipPreview bool) error {
-	// Create an empty output html file
-	outName := fmt.Sprintf("./tmp/%s.html", filepath.Base(inputFileName))
-	fmt.Println("out: ", outName)
-	outputFile, err := os.Create(outName)
+func run(inputFileName string) (string, error) {
+	tempFile, err := os.CreateTemp("", "mdp*.html")
 	if err != nil {
-		return err
+		return "", err
 	}
-	defer func() { _ = outputFile.Close() }()
+	defer func() {
+		if err = tempFile.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+	outName := tempFile.Name()
+	fmt.Println("out: ", outName)
 
 	// Read markdown data from input file and transform it into html body
 	input, err := os.ReadFile(inputFileName)
 	if err != nil {
-		return err
+		return "", err
 	}
 	body := parseContent(input)
 
 	// Render the body to output file
-	err = renderToFile(outputFile, template.HTML(body))
+	err = renderToFile(tempFile, template.HTML(body))
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	// Don't preview if skipPreview is true
-	if skipPreview {
-		return nil
-	}
-
-	return preview(outName)
+	return outName, nil
 }
 
 func main() {
@@ -50,7 +47,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := run(*fileName, *skipPreview); err != nil {
+	outName, err := run(*fileName)
+	if err != nil {
 		log.Fatalln(err)
+	}
+
+	// Skip preview if skipPreview is true
+	if !*skipPreview {
+		err = preview(outName)
+		if err != nil {
+			return
+		}
 	}
 }
