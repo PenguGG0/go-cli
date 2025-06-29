@@ -13,7 +13,7 @@ const (
 )
 
 func TestRun(t *testing.T) {
-	if err := run(inputFile); err != nil {
+	if err := run(inputFile, true); err != nil {
 		t.Fatal(err)
 	}
 

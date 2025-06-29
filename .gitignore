@@ -4,7 +4,6 @@
 *.dll
 *.so
 *.dylib
-*.json
 
 # Test binary, built with `go test -c`
 *.test
@@ -17,6 +16,7 @@ profile.cov
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+tmp/
 
 # Go workspace file
 go.work
