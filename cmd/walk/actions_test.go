@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_valid(t *testing.T) {
+func TestValid(t *testing.T) {
 	testCases := []struct {
 		name     string
 		file     string
