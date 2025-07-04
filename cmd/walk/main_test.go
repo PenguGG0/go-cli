@@ -94,42 +94,49 @@ func TestRun(t *testing.T) {
 
 func TestRunDel(t *testing.T) {
 	testCases := []struct {
-		name        string
-		extDelete   string
-		extNoDelete string
-		nDelete     int
-		nNoDelete   int
-		expected    string
+		name             string
+		extDelete        string
+		extNoDelete      string
+		nDelete          int
+		nNoDelete        int
+		expected         string
+		expectedLogLines int // nDelete+1
 	}{
 		{
-			name:        "DeleteExtensionNoMatch",
-			extDelete:   ".log",
-			extNoDelete: ".gz",
-			nDelete:     0,
-			nNoDelete:   10,
-			expected:    "",
+			name:             "DeleteExtensionNoMatch",
+			extDelete:        ".log",
+			extNoDelete:      ".gz",
+			nDelete:          0,
+			nNoDelete:        10,
+			expected:         "",
+			expectedLogLines: 1,
 		},
 		{
-			name:        "DeleteExtensionMatch",
-			extDelete:   ".log",
-			extNoDelete: "",
-			nDelete:     10,
-			nNoDelete:   0,
-			expected:    "",
+			name:             "DeleteExtensionMatch",
+			extDelete:        ".log",
+			extNoDelete:      "",
+			nDelete:          10,
+			nNoDelete:        0,
+			expected:         "",
+			expectedLogLines: 11,
 		},
 		{
-			name:        "DeleteExtensionMixed",
-			extDelete:   ".log",
-			extNoDelete: ".gz",
-			nDelete:     5,
-			nNoDelete:   5,
-			expected:    "",
+			name:             "DeleteExtensionMixed",
+			extDelete:        ".log",
+			extNoDelete:      ".gz",
+			nDelete:          5,
+			nNoDelete:        5,
+			expected:         "",
+			expectedLogLines: 6,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			buffer := new(bytes.Buffer)
+			var (
+				buffer    bytes.Buffer
+				logBuffer bytes.Buffer
+			)
 
 			tempDir, cleanup := createTempDir(t, map[string]int{
 				tc.extDelete:   tc.nDelete,
@@ -137,8 +144,8 @@ func TestRunDel(t *testing.T) {
 			})
 			defer cleanup()
 
-			app := application{ext: tc.extDelete, del: true}
-			if err := run(tempDir, buffer, app); err != nil {
+			app := application{ext: tc.extDelete, del: true, wLog: &logBuffer}
+			if err := run(tempDir, &buffer, app); err != nil {
 				t.Fatal(err)
 			}
 
@@ -153,6 +160,11 @@ func TestRunDel(t *testing.T) {
 
 			if len(filesLeft) != tc.nNoDelete {
 				t.Errorf("run() with '-delete' got %v files left, expected %v", len(filesLeft), tc.nNoDelete)
+			}
+
+			logLines := bytes.Split(logBuffer.Bytes(), []byte("\n"))
+			if len(logLines) != tc.expectedLogLines {
+				t.Errorf("run() with '-delete' got %v log lines, expected %v", len(logLines), tc.expectedLogLines)
 			}
 		})
 	}
