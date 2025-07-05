@@ -35,3 +35,9 @@ build/mdp:
 build/walk:
 	@echo "Building cmd/mdp..."
 	go build -ldflags=$(linker_flags) -o=./bin/walk.exe ./cmd/walk
+
+## build/unarchive: build cmd/unarchive to bin/unarchive.exe
+.PHONY: build/unarchive
+build/unarchive:
+	@echo "Building cmd/mdp..."
+	go build -ldflags=$(linker_flags) -o=./bin/unarchive.exe ./cmd/unarchive
