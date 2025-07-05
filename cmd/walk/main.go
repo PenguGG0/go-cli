@@ -15,6 +15,7 @@ type application struct {
 	list    bool      // list files
 	del     bool      // delete files
 	wLog    io.Writer // log destination
+	archive string    // archive directory
 }
 
 func run(root string, out io.Writer, app application) error {
@@ -39,6 +40,13 @@ func run(root string, out io.Writer, app application) error {
 			return listFile(path, out)
 		}
 
+		// Archive files and continue if successful
+		if app.archive != "" {
+			if err = archiveFile(app.archive, root, path); err != nil {
+				return err
+			}
+		}
+
 		if app.del {
 			return delFile(path, delLogger)
 		}
@@ -57,6 +65,7 @@ func main() {
 	root := flag.String("root", ".", "Root directory to start")
 	logFileName := flag.String("log", "", "Log deletes to this file")
 	list := flag.Bool("list", false, "List files only")
+	archive := flag.String("archive", "", "Archive directory")
 	del := flag.Bool("del", false, "Delete files")
 	ext := flag.String("ext", "", "File extension to filter out")
 	size := flag.Int64("size", 0, "Minimum file size")
@@ -90,9 +99,10 @@ func main() {
 		list:    *list,
 		del:     *del,
 		wLog:    logFile,
+		archive: *archive,
 	}
 
-	if err := run(*root, os.Stdout, app); err != nil {
+	if err = run(*root, os.Stdout, app); err != nil {
 		log.Fatalln(err)
 	}
 }

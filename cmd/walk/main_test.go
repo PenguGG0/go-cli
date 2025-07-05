@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -165,6 +166,78 @@ func TestRunDel(t *testing.T) {
 			logLines := bytes.Split(logBuffer.Bytes(), []byte("\n"))
 			if len(logLines) != tc.expectedLogLines {
 				t.Errorf("run() with '-delete' got %v log lines, expected %v", len(logLines), tc.expectedLogLines)
+			}
+		})
+	}
+}
+
+func TestRunArchive(t *testing.T) {
+	testCases := []struct {
+		name         string
+		extArchive   string
+		extNoArchive string
+		nArchive     int
+		nNoArchive   int
+	}{
+		{
+			name:         "ArchiveExtensionNoMatch",
+			extArchive:   ".log",
+			extNoArchive: ".gz",
+			nArchive:     0,
+			nNoArchive:   10,
+		},
+		{
+			name:         "ArchiveExtensionMatch",
+			extArchive:   ".log",
+			extNoArchive: "",
+			nArchive:     10,
+			nNoArchive:   0,
+		},
+		{
+			name:         "ArchiveExtensionMixed",
+			extArchive:   ".log",
+			extNoArchive: ".gz",
+			nArchive:     5,
+			nNoArchive:   5,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var buffer bytes.Buffer
+
+			tempDir, cleanup := createTempDir(t, map[string]int{
+				tc.extArchive:   tc.nArchive,
+				tc.extNoArchive: tc.nNoArchive,
+			})
+			defer cleanup()
+
+			archiveDir, cleanupArchive := createTempDir(t, nil)
+			defer cleanupArchive()
+
+			app := application{ext: tc.extArchive, archive: archiveDir}
+			if err := run(tempDir, &buffer, app); err != nil {
+				t.Fatal(err)
+			}
+
+			pattern := filepath.Join(tempDir, "*"+tc.extArchive)
+			expFiles, err := filepath.Glob(pattern)
+			if err != nil {
+				t.Fatal(err)
+			}
+			expOut := strings.Join(expFiles, "\n")
+
+			got := strings.TrimSpace(buffer.String())
+			if got != expOut {
+				t.Errorf("Got %v, expected %v\n", got, expOut)
+			}
+
+			filesArchived, err := os.ReadDir(archiveDir)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(filesArchived) != tc.nArchive {
+				t.Errorf("Got %v files archived, expected %v\n", len(filesArchived), tc.nArchive)
 			}
 		})
 	}
