@@ -10,15 +10,22 @@ import (
 	"path/filepath"
 )
 
-func valid(path string, ext string, minSize int64, fileInfo fs.FileInfo) bool {
+func valid(path string, extensions []string, minSize int64, fileInfo fs.FileInfo) bool {
 	// The file can't be a directory
-	// The size of file must be larger than min size
-	// If ext is not set, assume the extension matches ext
-	// The extension of file must match ext
+	// And the size of file must be larger than min size
 	if !fileInfo.IsDir() &&
-		fileInfo.Size() >= minSize &&
-		(ext == "" || ext == filepath.Ext(path)) {
-		return true
+		fileInfo.Size() >= minSize {
+		// If ext is not set, assume the extension matches ext
+		// The extension of file must match ext
+		if len(extensions) == 0 {
+			return true
+		} else {
+			for _, ext := range extensions {
+				if ext == "" || ext == filepath.Ext(path) {
+					return true
+				}
+			}
+		}
 	}
 
 	return false

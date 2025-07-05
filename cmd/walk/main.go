@@ -7,15 +7,16 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type application struct {
-	ext     string    // extension to filter out
-	minSize int64     // min file size
-	list    bool      // list files
-	del     bool      // delete files
-	wLog    io.Writer // log destination
-	archive string    // archive directory
+	extensions []string  // extensions to filter out
+	minSize    int64     // min file size
+	list       bool      // list files
+	del        bool      // delete files
+	wLog       io.Writer // log destination
+	archive    string    // archive directory
 }
 
 func run(root string, out io.Writer, app application) error {
@@ -31,7 +32,8 @@ func run(root string, out io.Writer, app application) error {
 		if err != nil {
 			return err
 		}
-		if !valid(path, app.ext, app.minSize, fileInfo) {
+
+		if !valid(path, app.extensions, app.minSize, fileInfo) {
 			return nil
 		}
 
@@ -67,9 +69,13 @@ func main() {
 	list := flag.Bool("list", false, "List files only")
 	archive := flag.String("archive", "", "Archive directory")
 	del := flag.Bool("del", false, "Delete files")
-	ext := flag.String("ext", "", "File extension to filter out")
+	ext := flag.String("ext", "", "File extension to filter out\n"+
+		"This flag allows multiple values seperated by ','\n"+
+		"e.g., '-ext .txt,.exe'")
 	size := flag.Int64("size", 0, "Minimum file size")
 	flag.Parse()
+
+	extensions := strings.Split(*ext, ",")
 
 	var (
 		logFile *os.File
@@ -94,12 +100,12 @@ func main() {
 	}()
 
 	app := application{
-		ext:     *ext,
-		minSize: *size,
-		list:    *list,
-		del:     *del,
-		wLog:    logFile,
-		archive: *archive,
+		extensions: extensions,
+		minSize:    *size,
+		list:       *list,
+		del:        *del,
+		wLog:       logFile,
+		archive:    *archive,
 	}
 
 	if err = run(*root, os.Stdout, app); err != nil {

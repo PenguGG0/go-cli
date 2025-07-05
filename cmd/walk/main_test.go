@@ -48,31 +48,31 @@ func TestRun(t *testing.T) {
 		{
 			name:     "NoFilter",
 			root:     "testdata",
-			app:      application{ext: "", minSize: 0, list: true},
+			app:      application{extensions: []string{""}, minSize: 0, list: true},
 			expected: "testdata\\dir.log\ntestdata\\dir2\\script.sh\n",
 		},
 		{
 			name:     "FilterExtensionMatch",
 			root:     "testdata",
-			app:      application{ext: ".log", minSize: 0, list: true},
+			app:      application{extensions: []string{".log"}, minSize: 0, list: true},
 			expected: "testdata\\dir.log\n",
 		},
 		{
 			name:     "FilterExtensionSizeMatch",
 			root:     "testdata",
-			app:      application{ext: ".log", minSize: 10, list: true},
+			app:      application{extensions: []string{".log"}, minSize: 10, list: true},
 			expected: "testdata\\dir.log\n",
 		},
 		{
 			name:     "FilterSizeNoMatch",
 			root:     "testdata",
-			app:      application{ext: ".log", minSize: 20, list: true},
+			app:      application{extensions: []string{".log"}, minSize: 20, list: true},
 			expected: "",
 		},
 		{
 			name:     "FilterExtensionNoMatch",
 			root:     "testdata",
-			app:      application{ext: ".gz", minSize: 0, list: true},
+			app:      application{extensions: []string{".gz"}, minSize: 0, list: true},
 			expected: "",
 		},
 	}
@@ -145,7 +145,7 @@ func TestRunDel(t *testing.T) {
 			})
 			defer cleanup()
 
-			app := application{ext: tc.extDelete, del: true, wLog: &logBuffer}
+			app := application{extensions: []string{tc.extDelete}, del: true, wLog: &logBuffer}
 			if err := run(tempDir, &buffer, app); err != nil {
 				t.Fatal(err)
 			}
@@ -215,7 +215,7 @@ func TestRunArchive(t *testing.T) {
 			archiveDir, cleanupArchive := createTempDir(t, nil)
 			defer cleanupArchive()
 
-			app := application{ext: tc.extArchive, archive: archiveDir}
+			app := application{extensions: []string{tc.extArchive}, archive: archiveDir}
 			if err := run(tempDir, &buffer, app); err != nil {
 				t.Fatal(err)
 			}
