@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -68,17 +69,19 @@ func TestTodoCLI(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		_, err = io.WriteString(cmdStdIn, testTask2+"\n"+testTask3)
-		if err != nil {
+		var stderr bytes.Buffer
+		cmd.Stderr = &stderr
+
+		if _, err = io.WriteString(cmdStdIn, testTask2+"\n"+testTask3); err != nil {
 			t.Fatal(err)
 		}
-		err = cmdStdIn.Close()
-		if err != nil {
+
+		if err = cmdStdIn.Close(); err != nil {
 			t.Fatal(err)
 		}
 
 		if err = cmd.Run(); err != nil {
-			t.Fatal(err)
+			t.Fatalf("%v: %v", err, stderr.String())
 		}
 	})
 

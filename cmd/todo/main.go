@@ -18,20 +18,23 @@ import (
 func getTask(r io.Reader, args ...string) ([]string, error) {
 	tasks := make([]string, 0)
 
+	// Deal with command line args first
 	if len(args) > 0 {
 		tasks = append(tasks, strings.Join(args, " "))
 		return tasks, nil
 	}
 
+	// If there's no args, read from io.Reader
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
-		if len(scanner.Text()) == 0 {
-			return tasks, fmt.Errorf("task cannot be blank")
+		line := strings.TrimSpace(scanner.Text())
+		if len(line) == 0 {
+			continue
 		}
-		tasks = append(tasks, scanner.Text())
+		tasks = append(tasks, line)
 	}
 	if err := scanner.Err(); err != nil {
-		return tasks, err
+		return tasks, fmt.Errorf("error scanning input: %w", err)
 	}
 	return tasks, nil
 }
@@ -97,10 +100,6 @@ func main() {
 
 	// if it's followed by a task string, add the task to l and save
 	case *add:
-		if flag.NArg() == 0 {
-			log.Fatalln("task cannot be blank")
-		}
-
 		tasks, err := getTask(os.Stdin, flag.Args()...)
 		if err != nil {
 			log.Fatalln(err)
