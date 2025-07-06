@@ -33,11 +33,27 @@ build/mdp:
 ## build/walk: build cmd/walk to bin/walk.exe
 .PHONY: build/walk
 build/walk:
-	@echo "Building cmd/mdp..."
+	@echo "Building cmd/walk..."
 	go build -ldflags=$(linker_flags) -o=./bin/walk.exe ./cmd/walk
 
 ## build/unarchive: build cmd/unarchive to bin/unarchive.exe
 .PHONY: build/unarchive
 build/unarchive:
-	@echo "Building cmd/mdp..."
+	@echo "Building cmd/unarchive..."
 	go build -ldflags=$(linker_flags) -o=./bin/unarchive.exe ./cmd/unarchive
+
+## build/colStats: build cmd/colStats to bin/colStats.exe
+#.PHONY: build/colStats
+#build/colStats:
+#	@echo "Building cmd/colStats..."
+#	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
+
+## build/colStats: build cmd/colStats to bin/colStats.exe
+.PHONY: build/colStats
+build/colStats:
+	@echo "Building cmd/colStats..."
+ifeq ($(OS),Windows_NT)
+	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
+else
+	go build -ldflags=$(linker_flags) -o=./bin/colStats ./cmd/colStats
+endif
