@@ -19,6 +19,7 @@ vendor/
 tmp/
 bin/
 benchmark/
+perf/
 
 # Go workspace file
 go.work

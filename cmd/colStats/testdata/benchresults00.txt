@@ -1,7 +1,0 @@
-goos: windows
-goarch: amd64
-pkg: github.com/PenguGG0/go-cli/cmd/colStats
-cpu: AMD Ryzen 9 7945HX with Radeon Graphics        
-BenchmarkRun-32    	       4	 271688600 ns/op
-PASS
-ok  	github.com/PenguGG0/go-cli/cmd/colStats	2.344s
