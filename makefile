@@ -42,18 +42,10 @@ build/unarchive:
 	@echo "Building cmd/unarchive..."
 	go build -ldflags=$(linker_flags) -o=./bin/unarchive.exe ./cmd/unarchive
 
-## build/colStats: build cmd/colStats to bin/colStats.exe
-#.PHONY: build/colStats
-#build/colStats:
-#	@echo "Building cmd/colStats..."
-#	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
-
-## build/colStats: build cmd/colStats to bin/colStats.exe
+# build/colStats: build cmd/colStats to bin/colStats.exe
 .PHONY: build/colStats
 build/colStats:
 	@echo "Building cmd/colStats..."
-ifeq ($(OS),Windows_NT)
 	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
-else
-	go build -ldflags=$(linker_flags) -o=./bin/colStats ./cmd/colStats
-endif
+
+

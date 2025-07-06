@@ -18,6 +18,7 @@ profile.cov
 vendor/
 tmp/
 bin/
+benchmark/
 
 # Go workspace file
 go.work
