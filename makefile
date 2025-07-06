@@ -47,5 +47,3 @@ build/unarchive:
 build/colStats:
 	@echo "Building cmd/colStats..."
 	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
-
-

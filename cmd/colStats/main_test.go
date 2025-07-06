@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"errors"
+	"io"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -88,5 +90,19 @@ func TestRun(t *testing.T) {
 				t.Errorf("Got %v, expected %v", res.String(), tc.exp)
 			}
 		})
+	}
+}
+
+func BenchmarkRun(b *testing.B) {
+	fileNames, err := filepath.Glob("./testdata/benchmark/*.csv")
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if err = run(fileNames, "avg", 2, io.Discard); err != nil {
+			b.Error(err)
+		}
 	}
 }
