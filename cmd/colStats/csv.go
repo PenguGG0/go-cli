@@ -26,16 +26,22 @@ func avg(data []float64) float64 {
 // Convert specific column of csv file into slice of float64
 func csv2float(r io.Reader, column int) ([]float64, error) {
 	cr := csv.NewReader(r)
+	cr.ReuseRecord = true
 	column--
 
-	allData, err := cr.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("cannot read data from file: %w", err)
-	}
-
-	var columnData []float64
+	columnData := make([]float64, 0, 2500)
 	var cellData float64
-	for i, row := range allData {
+	for i := 0; ; i++ {
+		// Read a record
+		row, err := cr.Read()
+		if err != nil {
+			// break the loop when reach the end of file
+			if err == io.EOF {
+				break
+			} else {
+				return nil, fmt.Errorf("cannot read data from file: %w", err)
+			}
+		}
 		// Skip the title row
 		if i == 0 {
 			continue
