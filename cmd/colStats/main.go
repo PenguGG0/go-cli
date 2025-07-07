@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 )
 
 func run(fileNames []string, op string, column int, out io.Writer) error {
@@ -30,31 +31,58 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 	}
 
 	data := make([]float64, 0)
+	resCh := make(chan []float64)
+	errCh := make(chan error)
+	doneCh := make(chan bool)
+
+	wg := sync.WaitGroup{}
 	for _, fileName := range fileNames {
-		// Open file
-		file, err := os.Open(fileName)
-		if err != nil {
-			return fmt.Errorf("cannot open file: %w", err)
-		}
+		wg.Add(1)
 
-		// Extract data of specific column from csv file
-		columnData, err := csv2float(file, column)
-		if err != nil {
-			return err
-		}
+		go func(fileName string) {
+			defer wg.Done()
 
-		if err = file.Close(); err != nil {
-			return err
-		}
+			// Open file
+			file, err := os.Open(fileName)
+			if err != nil {
+				errCh <- fmt.Errorf("cannot open file: %w", err)
+				return
+			}
+			// Extract data of specific column from csv file
+			columnData, err := csv2float(file, column)
+			if err != nil {
+				errCh <- err
+				return
+			}
+			// Close file
+			if err = file.Close(); err != nil {
+				errCh <- err
+				return
+			}
 
-		data = append(data, columnData...)
+			resCh <- columnData
+		}(fileName)
 	}
 
-	if _, err := fmt.Fprintln(out, opFunc(data)); err != nil {
-		return err
-	}
+	// Wait until all files have been processed
+	go func() {
+		wg.Wait()
+		doneCh <- true
+	}()
 
-	return nil
+	for {
+		select {
+		case err := <-errCh:
+			return err
+		case columnData := <-resCh:
+			data = append(data, columnData...)
+		case <-doneCh:
+			if _, err := fmt.Fprintln(out, opFunc(data)); err != nil {
+				return err
+			}
+			return nil
+		}
+	}
 }
 
 func main() {
