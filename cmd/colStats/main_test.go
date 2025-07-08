@@ -94,6 +94,7 @@ func TestRun(t *testing.T) {
 }
 
 func BenchmarkRun(b *testing.B) {
+	// Unzip colStatsBenchmarkData.tar.gz to get the benchmark folder and files
 	fileNames, err := filepath.Glob("./testdata/benchmark/*.csv")
 	if err != nil {
 		b.Fatal(err)
