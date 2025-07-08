@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"testing"
@@ -106,4 +107,15 @@ func BenchmarkRun(b *testing.B) {
 			b.Error(err)
 		}
 	}
+}
+
+func BenchmarkMin(b *testing.B) {
+	size := 10_000_000
+	testData := make([]float64, 0, size)
+	for range size {
+		testData = append(testData, rand.Float64())
+	}
+
+	b.ResetTimer()
+	_ = dataMin(testData)
 }

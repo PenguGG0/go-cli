@@ -23,6 +23,32 @@ func avg(data []float64) float64 {
 	return sum(data) / float64(len(data))
 }
 
+func dataMin(data []float64) float64 {
+	if len(data) == 0 {
+		return 0
+	}
+
+	res := data[0]
+	for _, v := range data[1:] {
+		res = min(res, v)
+	}
+
+	return res
+}
+
+func dataMax(data []float64) float64 {
+	if len(data) == 0 {
+		return 0
+	}
+
+	res := data[0]
+	for _, v := range data[1:] {
+		res = max(res, v)
+	}
+
+	return res
+}
+
 // Convert specific column of csv file into slice of float64
 func csv2float(r io.Reader, column int) ([]float64, error) {
 	cr := csv.NewReader(r)

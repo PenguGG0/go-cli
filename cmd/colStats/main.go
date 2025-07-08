@@ -27,6 +27,10 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 		opFunc = sum
 	case "avg":
 		opFunc = avg
+	case "min":
+		opFunc = dataMin
+	case "max":
+		opFunc = dataMax
 	default:
 		return fmt.Errorf("%w: %s", ErrInvalidOperation, op)
 	}
@@ -90,6 +94,10 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 		case columnData := <-resCh:
 			data = append(data, columnData...)
 		case <-doneCh:
+			if len(data) == 0 {
+				return ErrNoData
+			}
+
 			if _, err := fmt.Fprintln(out, opFunc(data)); err != nil {
 				return err
 			}
@@ -99,11 +107,11 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 }
 
 func main() {
-	op := flag.String("op", "sum", "Operation to be executed")
+	op := flag.String("op", "sum", "Operation to be executed\nValid options are: sum, avg, min, max")
 	column := flag.Int("col", 1, "CSV column on which to execute operation")
 	flag.Usage = func() {
 		flag.PrintDefaults()
-		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "\ne.g., colStats -op [sum] -col [1] [file1.csv file2.csv] \n")
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "\ne.g., colStats -op [str] -col [int] [file1.csv file2.csv] \n")
 	}
 	flag.Parse()
 
