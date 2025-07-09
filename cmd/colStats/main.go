@@ -10,6 +10,11 @@ import (
 	"sync"
 )
 
+type consumerRes struct {
+	data []float64
+	err  error
+}
+
 func run(fileNames []string, op string, column int, out io.Writer) error {
 	var opFunc statsFunc
 
@@ -38,9 +43,7 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 	data := make([]float64, 0)
 
 	fileCh := make(chan string)
-	resCh := make(chan []float64)
-	errCh := make(chan error)
-	doneCh := make(chan bool)
+	resCh := make(chan consumerRes)
 
 	// Producer
 	go func() {
@@ -59,23 +62,26 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 			defer wg.Done()
 
 			for fileName := range fileCh {
+				var res consumerRes
+
 				// Open file
 				file, err := os.Open(fileName)
 				if err != nil {
-					errCh <- fmt.Errorf("cannot open file: %w", err)
-					return
+					res.err = fmt.Errorf("cannot open file %s: %w", fileName, err)
+					resCh <- res
+					continue
 				}
 				// Extract data of specific column from csv file
-				columnData, err := csv2float(file, column)
+				res.data, err = csv2float(file, column)
 				if err != nil {
-					errCh <- err
+					res.err = err
 				}
 				// Close file
 				if err = file.Close(); err != nil {
-					errCh <- err
+					res.err = err
 				}
 
-				resCh <- columnData
+				resCh <- res
 			}
 		}()
 	}
@@ -83,27 +89,25 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 	// Wait until all files have been processed
 	go func() {
 		wg.Wait()
-		doneCh <- true
+		close(resCh)
 	}()
 
-	// Final Consumer
-	for {
-		select {
-		case err := <-errCh:
-			return err
-		case columnData := <-resCh:
-			data = append(data, columnData...)
-		case <-doneCh:
-			if len(data) == 0 {
-				return ErrNoData
-			}
-
-			if _, err := fmt.Fprintln(out, opFunc(data)); err != nil {
-				return err
-			}
-			return nil
+	// Final consumer
+	for res := range resCh {
+		if res.err != nil {
+			return res.err
 		}
+		data = append(data, res.data...)
 	}
+
+	// Perform operation on data
+	if len(data) == 0 {
+		return ErrNoData
+	}
+	if _, err := fmt.Fprintln(out, opFunc(data)); err != nil {
+		return err
+	}
+	return nil
 }
 
 func main() {
