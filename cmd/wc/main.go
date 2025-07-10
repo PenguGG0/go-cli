@@ -14,12 +14,24 @@ import (
 func main() {
 	countLines := flag.Bool("l", false, "Count lines")
 	countBytes := flag.Bool("b", false, "Count bytes")
+	fileName := flag.String("f", "", "File to count")
 	flag.Parse()
 
-	c, b, err := count(os.Stdin, *countLines, *countBytes)
+	var r io.Reader
+	var err error
+
+	if *fileName == "" {
+		r = os.Stdin
+	} else {
+		r, err = os.Open(*fileName)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+
+	c, b, err := count(r, *countLines, *countBytes)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Fatalln(err)
 	}
 
 	if *countLines {
@@ -51,7 +63,6 @@ func count(reader io.Reader, countLines, countBytes bool) (int, int, error) {
 	}
 
 	for scannerCount.Scan() {
-		scannerCount.Bytes()
 		c += 1
 	}
 	if err = scannerCount.Err(); err != nil {
