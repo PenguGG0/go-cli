@@ -77,6 +77,7 @@ func TestRun(t *testing.T) {
 			if tc.expErr != nil {
 				if err == nil {
 					t.Errorf("Got no error, expected error %v", tc.expErr)
+					return
 				}
 				if !errors.Is(err, tc.expErr) {
 					t.Errorf("Got error %v, expected error %v", err, tc.expErr)
