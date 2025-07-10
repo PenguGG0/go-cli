@@ -45,7 +45,6 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 	fileCh := make(chan string)
 	resCh := make(chan consumerRes)
 
-	// Producer
 	go func() {
 		defer close(fileCh)
 		for _, fileName := range fileNames {
@@ -53,7 +52,7 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 		}
 	}()
 
-	// Consumer
+	// Worker
 	wg := sync.WaitGroup{}
 	for i := 0; i < runtime.NumCPU(); i++ {
 		wg.Add(1)
@@ -92,7 +91,7 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 		close(resCh)
 	}()
 
-	// Final consumer
+	// Consumer
 	for res := range resCh {
 		if res.err != nil {
 			return res.err
