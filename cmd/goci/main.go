@@ -6,31 +6,43 @@ import (
 	"io"
 	"log"
 	"os"
-	"os/exec"
 )
 
 func run(proj string, out io.Writer) error {
-	if proj == "" {
-		return fmt.Errorf("project directory is required: %w", ErrValidation)
-	}
+	pipeline := make([]step, 0)
 
-	args := []string{"build", ".", "errors"}
-	cmd := exec.Command("go", args...)
-	cmd.Dir = proj
+	pipeline = append(pipeline, step{
+		name:    "go build",
+		exe:     "go",
+		message: "Go Build: SUCCESS",
+		proj:    proj,
+		args:    []string{"build", ".", "errors"},
+	})
 
-	if err := cmd.Run(); err != nil {
-		return &stepErr{step: "go build", msg: "go build failed", cause: err}
-	}
+	pipeline = append(pipeline, step{
+		name:    "go test",
+		exe:     "go",
+		message: "Go Test: SUCCESS",
+		proj:    proj,
+		args:    []string{"test", "-v"},
+	})
 
-	if _, err := fmt.Fprintln(out, "Go Build: SUCCESS"); err != nil {
-		return err
+	for _, s := range pipeline {
+		msg, err := s.execute()
+		if err != nil {
+			return err
+		}
+
+		if _, err = fmt.Fprintln(out, msg); err != nil {
+			return fmt.Errorf("can't print: %w", err)
+		}
 	}
 
 	return nil
 }
 
 func main() {
-	proj := flag.String("p", "", "Project directory")
+	proj := flag.String("p", ".", "Project directory")
 	flag.Parse()
 
 	if err := run(*proj, os.Stdout); err != nil {

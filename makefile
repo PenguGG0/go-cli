@@ -47,3 +47,9 @@ build/unarchive:
 build/colStats:
 	@echo "Building cmd/colStats..."
 	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
+
+# build/goci: build cmd/goci to bin/goci.exe
+.PHONY: build/goci
+build/goci:
+	@echo "Building cmd/goci..."
+	go build -ldflags=$(linker_flags) -o=./bin/goci.exe ./cmd/goci
