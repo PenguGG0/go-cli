@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"os/exec"
 )
 
-type step struct {
+type exceptionStep struct {
 	name    string
 	exe     string
 	args    []string
@@ -12,8 +14,12 @@ type step struct {
 	proj    string
 }
 
-func (s step) execute() (string, error) {
+func (s exceptionStep) execute() (string, error) {
 	cmd := exec.Command(s.exe, s.args...)
+
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
 	cmd.Dir = s.proj
 
 	if err := cmd.Run(); err != nil {
@@ -21,6 +27,14 @@ func (s step) execute() (string, error) {
 			step:  s.name,
 			msg:   "failed to execute",
 			cause: err,
+		}
+	}
+
+	if out.Len() > 0 {
+		return "", &stepErr{
+			step:  s.name,
+			msg:   fmt.Sprintf("invalid format:%s", out.String()),
+			cause: nil,
 		}
 	}
 

@@ -8,8 +8,12 @@ import (
 	"os"
 )
 
+type executer interface {
+	execute() (string, error)
+}
+
 func run(proj string, out io.Writer) error {
-	pipeline := make([]step, 0)
+	pipeline := make([]executer, 0)
 
 	pipeline = append(pipeline, step{
 		name:    "go build",
@@ -25,6 +29,13 @@ func run(proj string, out io.Writer) error {
 		message: "Go Test: SUCCESS",
 		proj:    proj,
 		args:    []string{"test", "-v"},
+	})
+	pipeline = append(pipeline, exceptionStep{
+		name:    "go fmt",
+		exe:     "gofmt",
+		message: "Gofmt: SUCCESS",
+		proj:    proj,
+		args:    []string{"-l", "."},
 	})
 
 	for _, s := range pipeline {

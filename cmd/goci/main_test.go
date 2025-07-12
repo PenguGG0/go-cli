@@ -7,23 +7,29 @@ import (
 )
 
 func TestRun(t *testing.T) {
-	var testCases = []struct {
+	testCases := []struct {
 		name   string
 		proj   string
 		outStr string
 		expErr error
 	}{
 		{
-			name:   "success",
+			name:   "allSuccess",
 			proj:   "./testdata/tool",
-			outStr: "Go Build: SUCCESS\nGo Test: SUCCESS\n",
+			outStr: "Go Build: SUCCESS\nGo Test: SUCCESS\nGofmt: SUCCESS\n",
 			expErr: nil,
 		},
 		{
-			name:   "fail",
-			proj:   "./testdata/toolErr",
+			name:   "buildFail",
+			proj:   "./testdata/toolBuildErr",
 			outStr: "",
 			expErr: &stepErr{step: "go build"},
+		},
+		{
+			name:   "fmtFail",
+			proj:   "./testdata/toolFmtErr",
+			outStr: "",
+			expErr: &stepErr{step: "go fmt"},
 		},
 	}
 
