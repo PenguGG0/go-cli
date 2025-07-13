@@ -6,6 +6,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -44,21 +46,42 @@ func run(proj string, out io.Writer) error {
 		message: "Git Push: SUCCESS",
 		proj:    proj,
 		args:    []string{"push", "origin", "master"},
-		timeout: 1 * time.Second,
+		timeout: 5 * time.Second,
 	})
 
-	for _, s := range pipeline {
-		msg, err := s.execute()
-		if err != nil {
-			return err
-		}
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-		if _, err = fmt.Fprintln(out, msg); err != nil {
-			return fmt.Errorf("can't print: %w", err)
+	errCh := make(chan error)
+	done := make(chan struct{})
+
+	go func() {
+		for _, s := range pipeline {
+			msg, err := s.execute()
+			if err != nil {
+				errCh <- err
+				return
+			}
+
+			if _, err = fmt.Fprintln(out, msg); err != nil {
+				errCh <- fmt.Errorf("can't print: %w", err)
+				return
+			}
+		}
+		close(done)
+	}()
+
+	for {
+		select {
+		case recSignal := <-sig:
+			signal.Stop(sig)
+			return fmt.Errorf("%s Exiting: %w", recSignal, ErrSignal)
+		case err := <-errCh:
+			return err
+		case <-done:
+			return nil
 		}
 	}
-
-	return nil
 }
 
 func main() {

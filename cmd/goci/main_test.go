@@ -5,9 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -73,7 +76,7 @@ func setupGit(t *testing.T, proj string) func() {
 }
 
 func TestHelperContext(t *testing.T) {
-	if os.Getenv("GO_HELPER_Context") != "1" {
+	if os.Getenv("GO_HELPER_CONTEXT") != "1" {
 		return
 	}
 
@@ -93,7 +96,7 @@ func TestHelperTimeout(t *testing.T) {
 		return
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(10 * time.Second)
 }
 
 func mockCmdContext(ctx context.Context, exe string, args ...string) *exec.Cmd {
@@ -102,7 +105,7 @@ func mockCmdContext(ctx context.Context, exe string, args ...string) *exec.Cmd {
 	cs = append(cs, args...)
 
 	cmd := exec.CommandContext(ctx, os.Args[0], cs...)
-	cmd.Env = append(cmd.Env, "GO_HELPER_Context=1")
+	cmd.Env = append(cmd.Env, "GO_HELPER_CONTEXT=1")
 	return cmd
 }
 
@@ -207,6 +210,71 @@ func TestRun(t *testing.T) {
 
 			if out.String() != tc.outStr {
 				t.Errorf("Got output: %q, expected: %q", out.String(), tc.outStr)
+			}
+		})
+	}
+}
+
+func TestRunKill(t *testing.T) {
+	testCases := []struct {
+		name   string
+		proj   string
+		sig    syscall.Signal
+		expErr error
+	}{
+		{"SIGINT", "./testdata/tool", syscall.SIGINT, ErrSignal},
+		{"SIGTERM", "./testdata/tool", syscall.SIGTERM, ErrSignal},
+		{"SIGQUIT", "./testdata/tool", syscall.SIGQUIT, nil},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			command = mockCmdTimeout
+
+			errCh := make(chan error)
+			ignSigCh := make(chan os.Signal, 1)
+			expSigCh := make(chan os.Signal, 1)
+
+			signal.Notify(ignSigCh, syscall.SIGQUIT)
+			defer signal.Stop(ignSigCh)
+
+			signal.Notify(expSigCh, tc.sig)
+			defer signal.Stop(expSigCh)
+
+			go func() {
+				errCh <- run(tc.proj, io.Discard)
+			}()
+			go func() {
+				time.Sleep(1 * time.Second)
+				p, err := os.FindProcess(syscall.Getpid())
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				err = (*os.Process).Signal(p, tc.sig)
+				if err != nil {
+					t.Error(err)
+					return
+				}
+			}()
+
+			select {
+			case err := <-errCh:
+				if tc.expErr != nil {
+					if err == nil {
+						t.Errorf("Got no error, expected error %v", tc.expErr)
+						return
+					}
+				}
+				if !errors.Is(err, tc.expErr) {
+					t.Errorf("Got error %v, expected error %v", err, tc.expErr)
+				}
+				return
+			case recSignal := <-expSigCh:
+				if recSignal != tc.sig {
+					t.Errorf("Got signal %v, expected signal %v", recSignal, tc.sig)
+				}
+			case <-ignSigCh:
 			}
 		})
 	}
