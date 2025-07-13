@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 )
 
 type executer interface {
@@ -36,6 +37,14 @@ func run(proj string, out io.Writer) error {
 		message: "Gofmt: SUCCESS",
 		proj:    proj,
 		args:    []string{"-l", "."},
+	})
+	pipeline = append(pipeline, timeoutStep{
+		name:    "git push",
+		exe:     "git",
+		message: "Git Push: SUCCESS",
+		proj:    proj,
+		args:    []string{"push", "origin", "master"},
+		timeout: 1 * time.Second,
 	})
 
 	for _, s := range pipeline {

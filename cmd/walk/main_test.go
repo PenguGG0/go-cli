@@ -29,8 +29,7 @@ func createTempDir(t *testing.T, files map[string]int) (string, func()) {
 	}
 
 	cleanup := func() {
-		err := os.RemoveAll(tempDir)
-		if err != nil {
+		if err = os.RemoveAll(tempDir); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -80,13 +79,11 @@ func TestRun(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			out := new(bytes.Buffer)
 
-			err := run(tc.root, out, tc.app)
-			if err != nil {
+			if err := run(tc.root, out, tc.app); err != nil {
 				t.Fatal(err)
 			}
 
-			gotOut := out.String()
-			if gotOut != tc.expected {
+			if gotOut := out.String(); gotOut != tc.expected {
 				t.Errorf("run() got %v, expected %v", gotOut, tc.expected)
 			}
 		})
@@ -158,7 +155,6 @@ func TestRunDel(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-
 			if len(filesLeft) != tc.nNoDelete {
 				t.Errorf("run() with '-delete' got %v files left, expected %v", len(filesLeft), tc.nNoDelete)
 			}
