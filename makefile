@@ -53,3 +53,9 @@ build/colStats:
 build/goci:
 	@echo "Building goci..."
 	go build -ldflags=$(linker_flags) -o=./bin/goci.exe ./goci
+
+## build/pScan: build pScan/ to bin/pScan.exe
+.PHONY: build/pScan
+build/pScan:
+	@echo "Building pScan..."
+	go build -ldflags=$(linker_flags) -o=./bin/pScan.exe ./pScan
