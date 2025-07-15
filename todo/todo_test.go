@@ -1,22 +1,20 @@
-package todo_test
+package main
 
 import (
 	"os"
 	"testing"
-
-	"github.com/PenguGG0/go-cli/internal/todo"
 )
 
 func TestListAdd(t *testing.T) {
 	tests := []struct {
 		name     string
-		l        todo.List
+		l        List
 		taskName string
 		want     string
 	}{
 		{
 			name:     "add a new task",
-			l:        todo.List{},
+			l:        List{},
 			taskName: "New Task",
 			want:     "New Task",
 		},
@@ -36,13 +34,13 @@ func TestListAdd(t *testing.T) {
 func TestListComplete(t *testing.T) {
 	tests := []struct {
 		name     string
-		l        todo.List
+		l        List
 		taskName string
 		wantName string
 	}{
 		{
 			name:     "add a new task",
-			l:        todo.List{},
+			l:        List{},
 			taskName: "New Task",
 			wantName: "New Task",
 		},
@@ -68,12 +66,12 @@ func TestListComplete(t *testing.T) {
 func TestListDelete(t *testing.T) {
 	tests := []struct {
 		name  string
-		l     todo.List
+		l     List
 		tasks []string
 	}{
 		{
 			name: "delete the second task",
-			l:    todo.List{},
+			l:    List{},
 			tasks: []string{
 				"New Task 1",
 				"New Task 2",
@@ -105,14 +103,14 @@ func TestListDelete(t *testing.T) {
 func TestListSaveGet(t *testing.T) {
 	tests := []struct {
 		name     string
-		l1       todo.List
-		l2       todo.List
+		l1       List
+		l2       List
 		taskName string
 	}{
 		{
 			name:     "save task to a file and get it",
-			l1:       todo.List{},
-			l2:       todo.List{},
+			l1:       List{},
+			l2:       List{},
 			taskName: "New Task",
 		},
 	}

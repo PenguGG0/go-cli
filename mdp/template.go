@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"path/filepath"
 
-	"github.com/PenguGG0/go-cli/ui"
+	"github.com/PenguGG0/go-cli/mdp/ui"
 )
 
 type templateData struct {

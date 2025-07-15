@@ -1,4 +1,3 @@
-// Word counter
 package main
 
 import (

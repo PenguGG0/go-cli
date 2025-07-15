@@ -1,5 +1,5 @@
 // Package todo provides todo list api
-package todo
+package main
 
 import (
 	"encoding/json"

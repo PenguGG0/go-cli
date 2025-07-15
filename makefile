@@ -12,44 +12,44 @@ help:
 current_time = $(shell powershell -Command "Get-Date -Format 'yyyy-MM-ddTHH:mm:ss'")
 linker_flags = '-s -w'
 
-## build/wc: build cmd/wc to bin/wc.exe
+## build/wc: build wc/ to bin/wc.exe
 .PHONY: build/wc
 build/wc:
-	@echo "Building cmd/wc..."
-	go build -ldflags=$(linker_flags) -o=./bin/wc.exe ./cmd/wc
+	@echo "Building wc..."
+	go build -ldflags=$(linker_flags) -o=./bin/wc.exe ./wc
 
-## build/todo: build cmd/todo to bin/todo.exe
+## build/todo: build todo/ to bin/todo.exe
 .PHONY: build/todo
 build/todo:
-	@echo "Building cmd/todo..."
-	go build -ldflags=$(linker_flags) -o=./bin/todo.exe ./cmd/todo
+	@echo "Building todo..."
+	go build -ldflags=$(linker_flags) -o=./bin/todo.exe ./todo
 
-## build/mdp: build cmd/mdp to bin/mdp.exe
+## build/mdp: build mdp/ to bin/mdp.exe
 .PHONY: build/mdp
 build/mdp:
-	@echo "Building cmd/mdp..."
-	go build -ldflags=$(linker_flags) -o=./bin/mdp.exe ./cmd/mdp
+	@echo "Building mdp..."
+	go build -ldflags=$(linker_flags) -o=./bin/mdp.exe ./mdp
 
-## build/walk: build cmd/walk to bin/walk.exe
+## build/walk: build walk/ to bin/walk.exe
 .PHONY: build/walk
 build/walk:
-	@echo "Building cmd/walk..."
-	go build -ldflags=$(linker_flags) -o=./bin/walk.exe ./cmd/walk
+	@echo "Building walk..."
+	go build -ldflags=$(linker_flags) -o=./bin/walk.exe ./walk
 
-## build/unarchive: build cmd/unarchive to bin/unarchive.exe
+## build/unarchive: build unarchive/ to bin/unarchive.exe
 .PHONY: build/unarchive
 build/unarchive:
-	@echo "Building cmd/unarchive..."
-	go build -ldflags=$(linker_flags) -o=./bin/unarchive.exe ./cmd/unarchive
+	@echo "Building unarchive..."
+	go build -ldflags=$(linker_flags) -o=./bin/unarchive.exe ./unarchive
 
-# build/colStats: build cmd/colStats to bin/colStats.exe
+## build/colStats: build colStats/ to bin/colStats.exe
 .PHONY: build/colStats
 build/colStats:
-	@echo "Building cmd/colStats..."
-	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./cmd/colStats
+	@echo "Building colStats..."
+	go build -ldflags=$(linker_flags) -o=./bin/colStats.exe ./colStats
 
-# build/goci: build cmd/goci to bin/goci.exe
+## build/goci: build goci/ to bin/goci.exe
 .PHONY: build/goci
 build/goci:
-	@echo "Building cmd/goci..."
-	go build -ldflags=$(linker_flags) -o=./bin/goci.exe ./cmd/goci
+	@echo "Building goci..."
+	go build -ldflags=$(linker_flags) -o=./bin/goci.exe ./goci
