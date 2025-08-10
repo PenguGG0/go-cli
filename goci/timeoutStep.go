@@ -12,9 +12,9 @@ var command = exec.CommandContext
 type timeoutStep struct {
 	name    string
 	exe     string
-	args    []string
 	message string
 	proj    string
+	args    []string
 	timeout time.Duration
 }
 
@@ -34,6 +34,7 @@ func (s timeoutStep) execute() (string, error) {
 				cause: context.DeadlineExceeded,
 			}
 		}
+
 		return "", &stepErr{
 			step:  s.name,
 			msg:   "failed to execute",

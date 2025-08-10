@@ -29,19 +29,19 @@ func (hl *HostsList) search(host string) (bool, int) {
 }
 
 func (hl *HostsList) Add(host string) error {
-
-
 	if found, _ := hl.search(host); found {
 		return fmt.Errorf("add %s failed: %w", host, ErrExists)
 	}
 
 	hl.Hosts = append(hl.Hosts, host)
+
 	return nil
 }
 
 func (hl *HostsList) Remove(host string) error {
 	if found, i := hl.search(host); found {
 		hl.Hosts = append(hl.Hosts[:i], hl.Hosts[i+1:]...)
+
 		return nil
 	}
 
@@ -54,6 +54,7 @@ func (hl *HostsList) Load(hostFile string) error {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil
 		}
+
 		return err
 	}
 	defer func() { _ = f.Close() }()
@@ -72,5 +73,6 @@ func (hl *HostsList) Save(hostFile string) error {
 	for _, h := range hl.Hosts {
 		output += fmt.Sprintln(h)
 	}
-	return os.WriteFile(hostFile, []byte(output), 0644)
+
+	return os.WriteFile(hostFile, []byte(output), 0o644)
 }

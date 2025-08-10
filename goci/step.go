@@ -7,9 +7,9 @@ import (
 type step struct {
 	name    string
 	exe     string
-	args    []string
 	message string
 	proj    string
+	args    []string
 }
 
 func (s step) execute() (string, error) {

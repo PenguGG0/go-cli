@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -49,7 +50,7 @@ func dataMax(data []float64) float64 {
 	return res
 }
 
-// Convert specific column of csv file into slice of float64
+// Convert specific column of csv file into slice of float64.
 func csv2float(r io.Reader, column int) ([]float64, error) {
 	cr := csv.NewReader(r)
 	cr.ReuseRecord = true
@@ -62,7 +63,7 @@ func csv2float(r io.Reader, column int) ([]float64, error) {
 		row, err := cr.Read()
 		if err != nil {
 			// break the loop when reach the end of file
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			} else {
 				return nil, fmt.Errorf("cannot read data from file: %w", err)
@@ -81,7 +82,7 @@ func csv2float(r io.Reader, column int) ([]float64, error) {
 		// Get data from the specific column in every row
 		cellData, err = strconv.ParseFloat(row[column], 64)
 		if err != nil {
-			return nil, fmt.Errorf("%w: %s", ErrNotNumber, err)
+			return nil, fmt.Errorf("%w: %w", ErrNotNumber, err)
 		}
 
 		columnData = append(columnData, cellData)

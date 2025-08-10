@@ -46,6 +46,7 @@ func delFile(path string, delLogger *log.Logger) error {
 	}
 
 	delLogger.Println(path)
+
 	return nil
 }
 
@@ -69,10 +70,10 @@ func archiveFile(destDir, root, sourcePath string) error {
 	targetPath := filepath.Join(destDir, relDir, filepath.Base(sourcePath)+".gz")
 
 	// Open the destination file, create it if it doesn't exist
-	if err = os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(targetPath), 0o755); err != nil {
 		return err
 	}
-	dest, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, 0644)
+	dest, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, 0o644)
 	if err != nil {
 		return err
 	}

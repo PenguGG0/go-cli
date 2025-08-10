@@ -11,8 +11,8 @@ import (
 )
 
 type consumerRes struct {
-	data []float64
 	err  error
+	data []float64
 }
 
 func run(fileNames []string, op string, column int, out io.Writer) error {
@@ -68,6 +68,7 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 				if err != nil {
 					res.err = fmt.Errorf("cannot open file %s: %w", fileName, err)
 					resCh <- res
+
 					continue
 				}
 				// Extract data of specific column from csv file
@@ -106,6 +107,7 @@ func run(fileNames []string, op string, column int, out io.Writer) error {
 	if _, err := fmt.Fprintln(out, opFunc(data)); err != nil {
 		return err
 	}
+
 	return nil
 }
 

@@ -31,16 +31,16 @@ func unarchive(destDir, archive, sourcePath string) error {
 	// Get file name of destination compressed file
 	// If file doesn't end with ".gz", skip it
 	targetName, found := strings.CutSuffix(filepath.Base(sourcePath), ".gz")
-	if found == false {
+	if !found {
 		return nil
 	}
 	targetPath := filepath.Join(destDir, relDir, targetName)
 
 	// Open the destination file, create it if it doesn't exist
-	if err = os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+	if err = os.MkdirAll(filepath.Dir(targetPath), 0o755); err != nil {
 		return err
 	}
-	dest, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, 0644)
+	dest, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, 0o644)
 	if err != nil {
 		return err
 	}

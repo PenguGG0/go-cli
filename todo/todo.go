@@ -14,10 +14,10 @@ type Stringer interface {
 }
 
 type item struct {
-	Task        string
-	Done        bool
 	CreatedAt   time.Time
 	CompletedAt time.Time
+	Task        string
+	Done        bool
 }
 
 type List []item
@@ -41,6 +41,7 @@ func (l *List) Complete(i int) error {
 
 	ls[i-1].Done = true
 	ls[i-1].CompletedAt = time.Now()
+
 	return nil
 }
 
@@ -51,6 +52,7 @@ func (l *List) Delete(i int) error {
 	}
 
 	*l = append(ls[:i-1], ls[i:]...)
+
 	return nil
 }
 
@@ -59,7 +61,8 @@ func (l *List) Save(fileName string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fileName, js, 0644)
+
+	return os.WriteFile(fileName, js, 0o644)
 }
 
 func (l *List) Get(fileName string) error {
@@ -68,12 +71,14 @@ func (l *List) Get(fileName string) error {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil
 		}
+
 		return err
 	}
 
 	if len(file) == 0 {
 		return nil
 	}
+
 	return json.Unmarshal(file, l)
 }
 

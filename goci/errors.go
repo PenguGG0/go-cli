@@ -11,9 +11,9 @@ var (
 )
 
 type stepErr struct {
+	cause error
 	step  string
 	msg   string
-	cause error
 }
 
 func (s *stepErr) Error() string {

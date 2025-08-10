@@ -60,11 +60,13 @@ func run(proj string, out io.Writer) error {
 			msg, err := s.execute()
 			if err != nil {
 				errCh <- err
+
 				return
 			}
 
 			if _, err = fmt.Fprintln(out, msg); err != nil {
 				errCh <- fmt.Errorf("can't print: %w", err)
+
 				return
 			}
 		}
@@ -75,6 +77,7 @@ func run(proj string, out io.Writer) error {
 		select {
 		case recSignal := <-sig:
 			signal.Stop(sig)
+
 			return fmt.Errorf("%s Exiting: %w", recSignal, ErrSignal)
 		case err := <-errCh:
 			return err

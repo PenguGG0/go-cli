@@ -11,12 +11,12 @@ import (
 )
 
 type application struct {
-	extensions []string  // extensions to filter out
-	minSize    int64     // min file size
-	list       bool      // list files
-	del        bool      // delete files
-	wLog       io.Writer // log destination
-	archive    string    // archive directory
+	wLog       io.Writer
+	archive    string
+	extensions []string
+	minSize    int64
+	list       bool
+	del        bool
 }
 
 func run(root string, out io.Writer, app application) error {
@@ -70,7 +70,7 @@ func main() {
 	archive := flag.String("archive", "", "Archive directory")
 	del := flag.Bool("del", false, "Delete files")
 	ext := flag.String("ext", "", "File extension to filter out\n"+
-		"This flag allows multiple values seperated by ','\n"+
+		"This flag allows multiple values separated by ','\n"+
 		"e.g., '-ext .txt,.exe'")
 	size := flag.Int64("size", 0, "Minimum file size")
 	flag.Parse()
@@ -83,7 +83,7 @@ func main() {
 	)
 
 	if *logFileName != "" {
-		logFile, err = os.OpenFile(*logFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0644)
+		logFile, err = os.OpenFile(*logFileName, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o644)
 		if err != nil {
 			log.Fatalln(err)
 		}

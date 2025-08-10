@@ -10,6 +10,7 @@ import (
 	"github.com/PenguGG0/go-cli/pScan/scan"
 )
 
+
 func TestAdd(t *testing.T) {
 	testCases := []struct {
 		name      string
@@ -133,7 +134,7 @@ func TestLoadNoFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	if err = os.Remove(filePath); err != nil {
 		t.Fatalf("Error deleting temp file: %s", err)
 	}

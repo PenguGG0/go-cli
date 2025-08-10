@@ -19,6 +19,7 @@ func getTask(r io.Reader, args ...string) ([]string, error) {
 	// Deal with command line args first
 	if len(args) > 0 {
 		tasks = append(tasks, strings.Join(args, " "))
+
 		return tasks, nil
 	}
 
@@ -34,11 +35,12 @@ func getTask(r io.Reader, args ...string) ([]string, error) {
 	if err := scanner.Err(); err != nil {
 		return tasks, fmt.Errorf("error scanning input: %w", err)
 	}
+
 	return tasks, nil
 }
 
 func main() {
-	var todoFileName = "./tmp/.todo.json"
+	todoFileName := "./tmp/.todo.json"
 
 	if os.Getenv("TODO_FILENAME") != "" {
 		todoFileName = os.Getenv("TODO_FILENAME")

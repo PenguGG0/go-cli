@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 	"html/template"
 	"os"
 	"os/exec"
@@ -58,7 +58,7 @@ func preview(fileName string) error {
 	case "darwin":
 		cName = "open"
 	default:
-		return fmt.Errorf("OS not supported")
+		return errors.New("OS not supported")
 	}
 
 	fileName, err := filepath.Abs(fileName)

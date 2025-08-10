@@ -2,16 +2,15 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"os/exec"
 )
 
 type exceptionStep struct {
 	name    string
 	exe     string
-	args    []string
 	message string
 	proj    string
+	args    []string
 }
 
 func (s exceptionStep) execute() (string, error) {
@@ -33,7 +32,7 @@ func (s exceptionStep) execute() (string, error) {
 	if out.Len() > 0 {
 		return "", &stepErr{
 			step:  s.name,
-			msg:   fmt.Sprintf("invalid format:%s", out.String()),
+			msg:   "invalid format:" + out.String(),
 			cause: nil,
 		}
 	}
