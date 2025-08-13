@@ -48,8 +48,8 @@ func (hl *HostsList) Remove(host string) error {
 	return fmt.Errorf("remove %s failed: %w", host, ErrNotExists)
 }
 
-func (hl *HostsList) Load(hostFile string) error {
-	f, err := os.Open(hostFile)
+func (hl *HostsList) Load(hostsFile string) error {
+	f, err := os.Open(hostsFile)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil
@@ -68,11 +68,11 @@ func (hl *HostsList) Load(hostFile string) error {
 	return nil
 }
 
-func (hl *HostsList) Save(hostFile string) error {
+func (hl *HostsList) Save(hostsFile string) error {
 	output := ""
 	for _, h := range hl.Hosts {
 		output += fmt.Sprintln(h)
 	}
 
-	return os.WriteFile(hostFile, []byte(output), 0o644)
+	return os.WriteFile(hostsFile, []byte(output), 0o644)
 }

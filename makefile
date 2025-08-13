@@ -58,4 +58,4 @@ build/goci:
 .PHONY: build/pScan
 build/pScan:
 	@echo "Building pScan..."
-	go build -ldflags=$(linker_flags) -o=./bin/pScan./pScan
+	go build -ldflags=$(linker_flags) -o=./bin/pScan ./pScan

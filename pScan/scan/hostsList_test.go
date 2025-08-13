@@ -2,14 +2,12 @@ package scan_test
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/PenguGG0/go-cli/pScan/scan"
 )
-
 
 func TestAdd(t *testing.T) {
 	testCases := []struct {
@@ -108,7 +106,7 @@ func TestSaveLoad(t *testing.T) {
 	hl2 := scan.HostsList{}
 	hostName := "host1"
 	hl1.Add(hostName)
-	tf, err := ioutil.TempFile("", "")
+	tf, err := os.CreateTemp("", "")
 	if err != nil {
 		t.Fatalf("Error creating temp file: %s", err)
 	}
