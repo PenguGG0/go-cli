@@ -28,7 +28,7 @@ func renderToFile(outputFile *os.File, body template.HTML) error {
 	if err != nil {
 		return err
 	}
-	tmpl, ok := templateCache["base.gohtml"]
+	tmpl, ok := templateCache["base.gotmpl"]
 	if !ok {
 		return err
 	}

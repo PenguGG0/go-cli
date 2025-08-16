@@ -51,8 +51,8 @@ func listAction(out io.Writer, hostsFile string, args []string) error {
 		return err
 	}
 
-	for _, host := range hl.Hosts {
-		if _, err := fmt.Fprintln(out, host); err != nil {
+	for _, h := range hl.Hosts {
+		if _, err := fmt.Fprintln(out, h); err != nil {
 			return err
 		}
 	}

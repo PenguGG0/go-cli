@@ -52,12 +52,12 @@ func deleteAction(out io.Writer, hostsFile string, args []string) error {
 		return err
 	}
 
-	for _, host := range args {
-		if err := hl.Remove(host); err != nil {
+	for _, h := range args {
+		if err := hl.Remove(h); err != nil {
 			return err
 		}
 
-		fmt.Fprintln(out, "Added host:", host)
+		fmt.Fprintln(out, "Added host:", h)
 	}
 
 	return hl.Save(hostsFile)

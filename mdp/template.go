@@ -17,7 +17,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	// Create a map to hold the templates act as the cache
 	templateCache := map[string]*template.Template{}
 
-	pages, err := fs.Glob(ui.Files, "html/mdp/*.gohtml")
+	pages, err := fs.Glob(ui.Files, "html/mdp/*.gotmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		name := filepath.Base(page)
 
 		patterns := []string{
-			"html/mdp/base.gohtml",
+			"html/mdp/base.gotmpl",
 		}
 
 		tmpl := template.New(name)

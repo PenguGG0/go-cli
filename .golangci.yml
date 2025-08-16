@@ -1,0 +1,20 @@
+version: "2"
+
+run:
+  issues-exit-code: 1
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  concurrency: 32
+
+linters:
+  # 使用 'enable' 列表来启用特定的 linter
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+formatters:
+  enable:
+    - gofumpt
