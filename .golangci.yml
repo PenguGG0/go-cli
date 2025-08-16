@@ -7,7 +7,6 @@ run:
   concurrency: 32
 
 linters:
-  # 使用 'enable' 列表来启用特定的 linter
   enable:
     - errcheck
     - govet

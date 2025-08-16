@@ -26,6 +26,7 @@ func main() {
 	)
 
 	y := 3
+	y++
 
 	x := false
 	if y > 4 {

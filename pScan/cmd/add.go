@@ -52,7 +52,7 @@ func addAction(out io.Writer, hostsFile string, args []string) error {
 		return err
 	}
 
-	for _, h := range hl.Hosts {
+	for _, h := range args {
 		if err := hl.Add(h); err != nil {
 			return err
 		}
