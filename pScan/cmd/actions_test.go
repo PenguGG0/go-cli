@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/PenguGG0/go-cli/pScan/scan"
@@ -89,6 +91,59 @@ func TestHostActions(t *testing.T) {
 	}
 }
 
+func TestScanAction(t *testing.T) {
+	hosts := []string{
+		"localhost",
+		"unknownhostoutthere",
+	}
+
+	tf, cleanup := setup(t, hosts, true)
+	defer cleanup()
+
+	// Init 2 ports, 1 open, 1 closed
+	ports := []int{}
+	for i := 0; i < 2; i++ {
+		// Use port 0 means to get a temporary port assigned dynamically
+		ln, err := net.Listen("tcp", net.JoinHostPort("localhost", "0"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer ln.Close()
+
+		// Get the port value
+		_, portStr, err := net.SplitHostPort(ln.Addr().String())
+		if err != nil {
+			t.Fatal(err)
+		}
+		port, err := strconv.Atoi(portStr)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// Add the port value to our ports slice
+		// Close it if testcase wants a closed port
+		ports = append(ports, port)
+		if i == 1 {
+			ln.Close()
+		}
+	}
+
+	expectedOut := fmt.Sprintln("localhost:")
+	expectedOut += fmt.Sprintf("\t%d: open\n", ports[0])
+	expectedOut += fmt.Sprintf("\t%d: closed\n", ports[1])
+	expectedOut += fmt.Sprintln()
+	expectedOut += fmt.Sprintln("unknownhostoutthere: Host not found")
+	expectedOut += fmt.Sprintln()
+
+	var out bytes.Buffer
+	if err := scanAction(&out, tf, ports); err != nil {
+		t.Fatalf("Expected no error, got %q\n", err)
+	}
+	if out.String() != expectedOut {
+		t.Errorf("Expected output %q, got %q\n", expectedOut, out.String())
+	}
+}
+
 func TestIntegration(t *testing.T) {
 	hosts := []string{
 		"host1",
@@ -135,6 +190,14 @@ func TestIntegration(t *testing.T) {
 	}
 	for _, h := range hostsEnd {
 		expectOut += fmt.Sprintf("%s\n", h)
+	}
+
+	// Scan hosts
+	if err := scanAction(&out, tf, nil); err != nil {
+		t.Fatalf("Got %q, expected no error.\n", err)
+	}
+	for _, v := range hostsEnd {
+		expectOut += fmt.Sprintf("%s: Host not found\n\n", v)
 	}
 
 	if out.String() != expectOut {
