@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/PenguGG0/go-cli/pScan/scan"
 	"github.com/spf13/cobra"
@@ -22,12 +24,27 @@ var scanCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		hostsFile := viper.GetString("hosts-file")
 
-		ports, err := cmd.Flags().GetIntSlice("ports")
+		portsStr, err := cmd.Flags().GetString("ports")
 		if err != nil {
 			return err
 		}
 
-		return scanAction(os.Stdout, hostsFile, ports)
+		ports, err := parsePortsString(portsStr)
+		if err != nil {
+			return err
+		}
+
+		showOpen, err := cmd.Flags().GetBool("show-open")
+		if err != nil {
+			return err
+		}
+
+		timeout, err := cmd.Flags().GetInt("timeout")
+		if err != nil {
+			return err
+		}
+
+		return scanAction(os.Stdout, hostsFile, ports, showOpen, timeout)
 	},
 }
 
@@ -46,10 +63,61 @@ func init() {
 
 	// By default, this flag sets the ports to be scanned as 22, 80 and 443
 	// Users can change them using "--ports" or "-p"
-	scanCmd.Flags().IntSliceP("ports", "p", []int{22, 80, 443}, "ports to scan")
+	scanCmd.Flags().StringP("ports", "p", "22,80,443", "ports to scan (e.g., 22,80,443 or 1-1024)")
+
+	scanCmd.Flags().BoolP("show-open", "s", false, "only show open ports")
+
+	scanCmd.Flags().IntP("timeout", "t", 1, "timeout for the scan (s)")
 }
 
-func printResults(out io.Writer, results []scan.Results) error {
+func parsePortsString(portsStr string) ([]int, error) {
+	ports := []int{}
+	parts := strings.SplitSeq(portsStr, ",")
+
+	for part := range parts {
+		if strings.Contains(part, "-") {
+			// range ports (e.g., 1-1024)
+			rangeParts := strings.Split(part, "-")
+			if len(rangeParts) != 2 {
+				return nil, fmt.Errorf("invalid ports range format: %s", part)
+			}
+
+			startPort, err := strconv.Atoi(rangeParts[0])
+			if err != nil {
+				return nil, fmt.Errorf("invalid start port in range %s: %w", part, err)
+			}
+
+			endPort, err := strconv.Atoi(rangeParts[1])
+			if err != nil {
+				return nil, fmt.Errorf("invalid end port in range %s: %w", part, err)
+			}
+
+			if startPort < 1 || endPort > 65535 || startPort > endPort {
+				return nil, fmt.Errorf("invalid port range %s: ports must be between 1 and 65535, start <= end", part)
+			}
+
+			for p := startPort; p <= endPort; p++ {
+				ports = append(ports, p)
+			}
+		} else {
+			// single port (e.g., 8080 or 443)
+			p, err := strconv.Atoi(part)
+			if err != nil {
+				return nil, fmt.Errorf("invalid port number %s: %w", part, err)
+			}
+
+			if p < 1 || p > 65535 {
+				return nil, fmt.Errorf("invalid port number %s: port must be between 1 and 65535", part)
+			}
+
+			ports = append(ports, p)
+		}
+	}
+
+	return ports, nil
+}
+
+func printResults(out io.Writer, results []scan.Results, showOpen bool) error {
 	message := ""
 	for _, r := range results {
 		message += fmt.Sprintf("%s:", r.Host)
@@ -61,6 +129,10 @@ func printResults(out io.Writer, results []scan.Results) error {
 
 		message += "\n"
 		for _, p := range r.PortStates {
+			// skip the closed ports when showOpen is true
+			if showOpen && !bool(p.Open) {
+				continue
+			}
 			message += fmt.Sprintf("\t%d: %s\n", p.Port, p.Open.String())
 		}
 		message += "\n"
@@ -70,14 +142,14 @@ func printResults(out io.Writer, results []scan.Results) error {
 	return err
 }
 
-func scanAction(out io.Writer, hostsFile string, ports []int) error {
+func scanAction(out io.Writer, hostsFile string, ports []int, showOpen bool, timeout int) error {
 	hl := &scan.HostsList{}
 
 	if err := hl.Load(hostsFile); err != nil {
 		return err
 	}
 
-	results := scan.Run(hl, ports)
+	results := scan.Run(hl, ports, timeout)
 
-	return printResults(out, results)
+	return printResults(out, results, showOpen)
 }

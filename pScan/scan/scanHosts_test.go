@@ -8,6 +8,8 @@ import (
 	"github.com/PenguGG0/go-cli/pScan/scan"
 )
 
+var timeout int = 1
+
 func TestStateString(t *testing.T) {
 	ps := scan.PortState{}
 	if ps.Open.String() != "closed" {
@@ -61,7 +63,7 @@ func TestRunHostFound(t *testing.T) {
 		}
 	}
 
-	res := scan.Run(hl, ports)
+	res := scan.Run(hl, ports, timeout)
 
 	if len(res) != 1 {
 		t.Fatalf("Got %q, expected 1\n", len(res))
@@ -92,7 +94,7 @@ func TestHostNotFound(t *testing.T) {
 	hl := &scan.HostsList{}
 	hl.Add(host)
 
-	res := scan.Run(hl, []int{})
+	res := scan.Run(hl, []int{}, timeout)
 
 	if len(res) != 1 {
 		t.Fatalf("Got %q, expected 1\n", len(res))

@@ -12,6 +12,11 @@ import (
 	"github.com/PenguGG0/go-cli/pScan/scan"
 )
 
+var (
+	timeout  int  = 1
+	showOpen bool = false
+)
+
 func setup(t *testing.T, hosts []string, initList bool) (string, func()) {
 	// Create temp file
 	tf, err := os.CreateTemp("", "pScan")
@@ -136,7 +141,7 @@ func TestScanAction(t *testing.T) {
 	expectedOut += fmt.Sprintln()
 
 	var out bytes.Buffer
-	if err := scanAction(&out, tf, ports); err != nil {
+	if err := scanAction(&out, tf, ports, showOpen, timeout); err != nil {
 		t.Fatalf("Expected no error, got %q\n", err)
 	}
 	if out.String() != expectedOut {
@@ -193,7 +198,7 @@ func TestIntegration(t *testing.T) {
 	}
 
 	// Scan hosts
-	if err := scanAction(&out, tf, nil); err != nil {
+	if err := scanAction(&out, tf, nil, showOpen, timeout); err != nil {
 		t.Fatalf("Got %q, expected no error.\n", err)
 	}
 	for _, v := range hostsEnd {

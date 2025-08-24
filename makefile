@@ -59,3 +59,5 @@ build/goci:
 build/pScan:
 	@echo "Building pScan..."
 	go build -ldflags=$(linker_flags) -o=./bin/pScan ./pScan
+	./bin/pScan completion fish > ~/.config/fish/completions/pScan.fish
+	./bin/pScan docs --dir pScan/docs/

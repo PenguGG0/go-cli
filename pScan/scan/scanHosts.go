@@ -28,7 +28,7 @@ type Results struct {
 }
 
 // scanPort scans a single TCP port
-func scanPort(host string, port int) PortState {
+func scanPort(host string, port int, timeout int) PortState {
 	// Assume the port is close
 	p := PortState{
 		Port: port,
@@ -37,7 +37,7 @@ func scanPort(host string, port int) PortState {
 
 	// Join the host and port to a address, and try to connect the address
 	address := net.JoinHostPort(host, strconv.Itoa(port))
-	scanConn, err := net.DialTimeout("tcp", address, 1*time.Second)
+	scanConn, err := net.DialTimeout("tcp", address, time.Duration(timeout)*time.Second)
 	// When the connection succeeds, set the value od p.Open to true
 	if err == nil {
 		p.Open = true
@@ -47,7 +47,7 @@ func scanPort(host string, port int) PortState {
 	return p
 }
 
-func Run(hl *HostsList, ports []int) []Results {
+func Run(hl *HostsList, ports []int, timeout int) []Results {
 	res := make([]Results, 0, len(hl.Hosts))
 
 	// Scan every host in the list
@@ -65,7 +65,7 @@ func Run(hl *HostsList, ports []int) []Results {
 
 		// Scan ports of the host
 		for _, p := range ports {
-			r.PortStates = append(r.PortStates, scanPort(h, p))
+			r.PortStates = append(r.PortStates, scanPort(h, p, timeout))
 		}
 
 		res = append(res, r)
