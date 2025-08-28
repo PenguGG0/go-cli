@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	todo "github.com/PenguGG0/go-cli/todo/internal"
 )
 
 func getTask(r io.Reader, args ...string) ([]string, error) {
@@ -63,7 +65,7 @@ func main() {
 
 	flag.Parse()
 
-	l := List{}
+	l := todo.List{}
 
 	// read from the todoFile
 	if err := l.Get(todoFileName); err != nil {

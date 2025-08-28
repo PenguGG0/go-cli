@@ -64,7 +64,9 @@ func TestTodoCLI(t *testing.T) {
 
 	t.Run("AddNewTaskFromSTDIN", func(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-add")
-		cmdStdIn, err := cmd.StdinPipe()
+		// Fix: Use '=' instead of ':=' to avoid shadowing 'err' from the outer scope.
+		var cmdStdIn io.WriteCloser
+		cmdStdIn, err = cmd.StdinPipe()
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -103,7 +105,9 @@ func TestTodoCLI(t *testing.T) {
 
 	t.Run("ListTasks", func(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-list")
-		out, err := cmd.CombinedOutput()
+		// Fix: Use '=' instead of ':=' to avoid shadowing 'err' from the outer scope.
+		var out []byte
+		out, err = cmd.CombinedOutput()
 		if err != nil {
 			t.Fatal(err)
 		}

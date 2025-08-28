@@ -4,6 +4,8 @@ import (
 	"net"
 	"strconv"
 	"time"
+
+	probing "github.com/prometheus-community/pro-bing"
 )
 
 type state bool
@@ -47,6 +49,24 @@ func scanPort(host string, port int, timeout int) PortState {
 	return p
 }
 
+func isHostPingable(host string, timeout int) bool {
+	pinger, err := probing.NewPinger(host)
+	if err != nil {
+		return false
+	}
+
+	pinger.Count = 1
+	pinger.Timeout = time.Duration(timeout) * time.Second
+
+	err = pinger.Run()
+	if err != nil {
+		return false
+	}
+
+	stats := pinger.Statistics()
+	return stats.PacketLoss == 0
+}
+
 func Run(hl *HostsList, ports []int, timeout int) []Results {
 	res := make([]Results, 0, len(hl.Hosts))
 
@@ -57,8 +77,8 @@ func Run(hl *HostsList, ports []int, timeout int) []Results {
 			PortStates: []PortState{},
 		}
 
-		// Valid the address, skip scanning ports if it's unvalid
-		if _, err := net.LookupHost(h); err != nil {
+		// Valid the address, skip scanning ports if it's not pingable
+		if !isHostPingable(h, timeout) {
 			res = append(res, r)
 			continue
 		}

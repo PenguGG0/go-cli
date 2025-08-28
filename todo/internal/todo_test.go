@@ -1,4 +1,4 @@
-package main
+package todo
 
 import (
 	"os"
@@ -90,7 +90,7 @@ func TestListDelete(t *testing.T) {
 			}
 
 			_ = test.l.Delete(2)
-			if 2 != len(test.l) {
+			if len(test.l) != 2 {
 				t.Errorf("expected len(l) = %v, got %v", 2, len(test.l))
 			}
 			if test.tasks[2] != test.l[1].Task {
