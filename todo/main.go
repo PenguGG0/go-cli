@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	todo "github.com/PenguGG0/go-cli/todo/internal"
+	"github.com/PenguGG0/go-cli/internal/todo"
 )
 
 func getTask(r io.Reader, args ...string) ([]string, error) {

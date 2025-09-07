@@ -123,7 +123,7 @@ func printResults(out io.Writer, results []scan.Results, showOpen bool) error {
 		message += fmt.Sprintf("%s:", r.Host)
 
 		if len(r.PortStates) == 0 {
-			message += " Host not found\n\n"
+			message += " Host not active\n\n"
 			continue
 		}
 

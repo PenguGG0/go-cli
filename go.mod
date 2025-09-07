@@ -1,6 +1,6 @@
 module github.com/PenguGG0/go-cli
 
-go 1.24.4
+go 1.25
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
