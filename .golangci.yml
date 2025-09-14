@@ -1,16 +1,22 @@
 version: "2"
 
+# =================================
+# linters
+# =================================
 linters:
   default: none
   enable:
-    - errcheck # 检查GO代码中未检查错误的程序
-    - govet # 检查并报告可疑结构，与 go vet 大致相同
     - unused # 检查未使用的常量、变量、函数和类型
+    #      - unparam # 报告未使用的函数参数。
+    - errcheck # 检查GO代码中未检查错误的程序
+
+    - govet # 检查并报告可疑结构，与 go vet 大致相同
+
     - staticcheck # 静态检查， 具体配置信息请查看 https://staticcheck.dev/docs/checks/
     - asasalint # 检查 pass []any as any in variadic func（...any） 的 S S
     - bidichk # 检查危险的 Unicode 字符序列。
     - copyloopvar # Linter 检测复制循环变量的位置。
-    #      - cyclop # 检查函数和封装圈复杂度
+    - cyclop # 检查函数和封装圈复杂度
     - funlen # 检查长函数。
     - decorder # 检查类型、常量、变量和函数的声明顺序和计数。
     - dogsled # 检查具有太多空白标识符的赋值（例如 x、、、_、：= f（））。
@@ -62,7 +68,7 @@ linters:
     - protogetter # 报告在应使用 getter 时直接从 proto 消息字段读取。
     - reassign # 检查是否未重新分配包变量。
     - recvcheck # 检查接收方类型是否一致。
-    - revive # 快速、可配置、可扩展、灵活且美观的 Go Linter。golint 的直接替代品。
+    #      - revive # 快速、可配置、可扩展、灵活且美观的 Go Linter。golint 的直接替代品。
     #      - rowserrcheck   # 检查行的 Rows.Err 是否检查成功。
     #      - sloglint   #确保使用 log/slog 时的代码风格一致。
     - spancheck # 检查 OpenTelemetry/Census 跨度的错误。
@@ -74,7 +80,7 @@ linters:
     - usestdlibvars # 一个 Linter，用于检测使用 Go 标准库中的变量/常量的可能性。
     - usetesting # 报告 testing 包中带有 replacement 的函数的使用情况。
     - unconvert # 删除不必要的类型转换。
-    #      - unparam   # 报告未使用的函数参数。
+
     #      - varnamelen   # 检查变量名称的长度是否与其范围匹配。
     - whitespace # 用于检查函数开头和结尾的不必要换行符，例如 if、for 等。
     #      - wrapcheck   # 检查从外部包返回的错误是否已包装。
@@ -107,7 +113,15 @@ linters:
     - tparallel # 检测 Go 测试代码中 t.Parallel（） 方法的不当使用。
     - wastedassign # 查找浪费的赋值语句。
     - zerologlint # 检测用户忘记使用Send或Msg发送的zerolog的错误使用。
+  settings:
+    unused:
+      exported-fields-are-used: false
+      parameters-are-used: false
+      local-variables-are-used: false
 
+# =================================
+# formatter
+# =================================
 formatters:
   enable:
     - gci
@@ -123,17 +137,19 @@ formatters:
       shorten-comments: true
       reformat-tags: true
       chain-split-dots: false
-  exclusions:
-    warn-unused: true
 
+# =================================
+# output
+# =================================
 output:
   formats:
     # 文本格式输出， 包含颜色，文件名称，行数和验证器名称
-    text:
+    # text:
+    #   path: stderr
+    #   print-linter-name: false
+    #   colors: false
+    json:
       path: stdout
-      print-linter-name: true
-      print-issued-lines: true
-      colors: true
 
   sort-order:
     - linter
@@ -141,16 +157,21 @@ output:
     - file # filepath, line, and column.
   show-stats: false
 
+# =================================
+# run
+# =================================
 run:
   timeout: 5m
   relative-path-mode: gomod
-  issues-exit-code: 1
   tests: false
 
   modules-download-mode: readonly
   allow-parallel-runners: true
   allow-serial-runners: true
 
+# =================================
+# severity
+# =================================
 severity:
   default: warning
   rules:
