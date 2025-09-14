@@ -10,7 +10,7 @@ import (
 )
 
 type Stringer interface {
-	String(onlyShowPending bool) string
+	String(bool) string
 }
 
 type item struct {
@@ -62,7 +62,7 @@ func (l *List) Save(fileName string) error {
 		return err
 	}
 
-	return os.WriteFile(fileName, js, 0o644)
+	return os.WriteFile(fileName, js, 0o600)
 }
 
 func (l *List) Get(fileName string) error {
@@ -87,10 +87,12 @@ func (l *List) String(onlyShowPending bool) string {
 
 	for k, t := range *l {
 		prefix := "     "
+
 		if t.Done {
 			if onlyShowPending {
 				continue
 			}
+
 			prefix = "Done "
 		}
 

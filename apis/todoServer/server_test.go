@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 )
@@ -11,10 +15,41 @@ import (
 func setupAPI(t *testing.T) (string, func()) {
 	t.Helper()
 
-	ts := httptest.NewServer(newMux(""))
+	tempTodoFile, err := os.CreateTemp("", "todotest")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ts := httptest.NewServer(newMux(tempTodoFile.Name()))
+
+	for i := 1; i < 3; i++ {
+		var body bytes.Buffer
+
+		taskName := fmt.Sprintf("Task number %d.", i)
+		item := struct {
+			Task string `json:"task"`
+		}{
+			Task: taskName,
+		}
+
+		if err := json.NewDecoder(&body).Decode(&item); err != nil {
+			t.Fatal(err)
+		}
+
+		r, err := http.Post(ts.URL+"/todo", "application/json", &body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer r.Body.Close()
+
+		if r.StatusCode != http.StatusCreated {
+			t.Fatalf("Failed to add initial items: Status: %d", r.StatusCode)
+		}
+	}
 
 	return ts.URL, func() {
 		ts.Close()
+		os.Remove(tempTodoFile.Name())
 	}
 }
 
@@ -66,6 +101,7 @@ func TestGet(t *testing.T) {
 				if body, err = io.ReadAll(r.Body); err != nil {
 					t.Error(err)
 				}
+
 				if !strings.Contains(string(body), tc.expContent) {
 					t.Errorf("Got %q, expected %q.", string(body), tc.expContent)
 				}

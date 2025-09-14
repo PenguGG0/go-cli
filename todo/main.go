@@ -32,8 +32,10 @@ func getTask(r io.Reader, args ...string) ([]string, error) {
 		if len(line) == 0 {
 			continue
 		}
+
 		tasks = append(tasks, line)
 	}
+
 	if err := scanner.Err(); err != nil {
 		return tasks, fmt.Errorf("error scanning input: %w", err)
 	}
@@ -87,6 +89,7 @@ func main() {
 		if err := l.Complete(*complete); err != nil {
 			log.Fatalln(err)
 		}
+
 		if err := l.Save(todoFileName); err != nil {
 			log.Fatalln(err)
 		}
@@ -96,6 +99,7 @@ func main() {
 		if err := l.Delete(*del); err != nil {
 			log.Fatalln(err)
 		}
+
 		if err := l.Save(todoFileName); err != nil {
 			log.Fatalln(err)
 		}
@@ -106,9 +110,11 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		}
+
 		for _, t := range tasks {
 			l.Add(t)
 		}
+
 		if err = l.Save(todoFileName); err != nil {
 			log.Fatalln(err)
 		}

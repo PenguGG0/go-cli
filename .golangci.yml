@@ -9,8 +9,8 @@ linters:
     - unused # 检查未使用的常量、变量、函数和类型
     # - unparam # 报告未使用的函数参数。
     - errcheck # 检查GO代码中未检查错误的程序
-
     - staticcheck # 静态检查， 具体配置信息请查看 https://staticcheck.dev/docs/checks/
+
     # - asasalint # 检查可变函数 (…any) 中是否将 []any 传递为 any
     - asciicheck #检查所有代码标识符的名称中是否不包含非 ASCII 符号
     # - bidichk # 检查危险的 Unicode 字符序列
@@ -107,7 +107,7 @@ linters:
     - wastedassign # 查找浪费的赋值语句
     - whitespace # 用于检查函数开头和结尾的不必要换行符，例如 if、for 等
     # - wrapcheck   # 检查从外部包返回的错误是否已包装
-    # - wsl   # 添加或删除空行
+    - wsl_v5 # 添加或删除空行
     # - zerologlint # 检测用户忘记使用Send或Msg发送的zerolog的错误使用。
   settings:
     unused:
@@ -191,5 +191,9 @@ severity:
         - decorder
         - dogsled
         - dupl
+        - errcheck
+        - wsl_v5
+        - nlreturn
+        - noctx
 
       severity: info

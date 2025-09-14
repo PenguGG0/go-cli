@@ -48,9 +48,11 @@ func TestListComplete(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			test.l.Add(test.taskName)
+
 			if test.wantName != test.l[0].Task {
 				t.Errorf("expected %v, got %v", test.wantName, test.l[0].Task)
 			}
+
 			if test.l[0].Done == true {
 				t.Errorf("new task should not be completed")
 			}
