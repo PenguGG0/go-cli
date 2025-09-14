@@ -22,7 +22,7 @@ func createTempDir(t *testing.T, files map[string]int) (string, func()) {
 		for j := 1; j <= n; j++ {
 			fileName := fmt.Sprintf("file%d%s", j, k)
 			filePath := filepath.Join(tempDir, fileName)
-			if err = os.WriteFile(filePath, []byte("dummy"), 0644); err != nil {
+			if err = os.WriteFile(filePath, []byte("dummy"), 0o644); err != nil {
 				t.Fatal(err)
 			}
 		}

@@ -1,0 +1,159 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck # 检查GO代码中未检查错误的程序
+    - govet # 检查并报告可疑结构，与 go vet 大致相同
+    - unused # 检查未使用的常量、变量、函数和类型
+    - staticcheck # 静态检查， 具体配置信息请查看 https://staticcheck.dev/docs/checks/
+    - asasalint # 检查 pass []any as any in variadic func（...any） 的 S S
+    - bidichk # 检查危险的 Unicode 字符序列。
+    - copyloopvar # Linter 检测复制循环变量的位置。
+    #      - cyclop # 检查函数和封装圈复杂度
+    - funlen # 检查长函数。
+    - decorder # 检查类型、常量、变量和函数的声明顺序和计数。
+    - dogsled # 检查具有太多空白标识符的赋值（例如 x、、、_、：= f（））。
+    - dupl # 检测重复的代码片段。
+    - dupword # 检查源代码中的重复单词。
+    - errchkjson # 检查传递给 json 编码函数的类型。报告不支持的类型，并报告可以省略对返回错误的检查的情况。
+    - errorlint # 用于查找会导致Go 1.13中引入的错误包装方案出现问题的代码
+    #      - exhaustive   # 检查 enum switch 语句的穷举性。
+    #      - exhaustruct   # 检查是否初始化了所有结构字段
+    - fatcontext # 检测循环和函数文本中的嵌套上下文。
+    - forbidigo # 禁止标识符
+    #      - funcorder   # 检查函数、方法和构造函数的顺序
+    - ginkgolinter # 强制实施使用 ginkgo 和 gomega 的标准。
+    - gochecksumtype # 对Go“求和类型”运行穷举性检查。
+    #      - gocognit   # 计算和检查函数的认知复杂性。
+    - goconst # 查找可替换为常量的重复字符串。
+    - gocritic #提供检查错误、性能和样式问题的诊断。  可通过动态规则进行扩展，无需重新编译。  动态规则是使用 AST 模式、过滤器、报告消息和可选建议以声明方式编写的。
+    #      - gocyclo   # 计算并检查函数的圈复杂度。
+    - godot # 检查评论是否以句点结尾。
+    - godox # 检测注释中 FIXME、TODO 和其他关键字的使用情况。
+    #      - goheader   # 检查文件头是否与 pattern 匹配。
+    - gomoddirectives # 在 go.mod 中管理 'replace'、'retract' 和 'excludes' 指令的使用。
+    - gomodguard # 从 go.mod中对版本进行限制， 提供了更详细的控制选项
+    - gosec # 检查源代码是否存在安全问题。
+    #      - gosmopolitan   # 在您的 Go 代码库中报告某些 i18n/l10n 反模式。
+    #      - grouper   # 分析表达式组。
+    #      - iface   # 检测接口使用错误，帮助开发者避免接口污染。
+    - importas # 强制实施一致的导入别名。
+    #      - inamedparam   # Reports 具有未命名方法参数的接口。
+    #      - interfacebloat   # 一个检查接口内方法数量的 Linter。
+    #      - ireturn   # 接受接口，返回具体类型。
+    - lll # 报告长度。 默认长度为120，不单独进行设置
+    #      - loggercheck   # 检查常见 Logger 库 （kitlog、klog、logr、slog、zap） 的键值对。
+    - maintidx # Maintidx 衡量每个功能的可维护性指数。
+    #      - makezero   # 查找初始长度为非零的切片声明。
+    - misspell # 查找经常拼写错误的英语单词。
+    - musttag #在 （未） 封送的结构中强制实施字段标记。
+    - nakedret # 检查具有裸返回值的函数是否不超过最大大小（可以为零）。
+    - nestif # 报告深度嵌套的 if 语句。默认5层
+    - nilnil # 检查是否没有同时返回错误和无效值
+    - nlreturn # return 前方加一个空行，让代码逻辑清晰， 默认空行为1行
+    - nolintlint # 报告格式不正确或不充分的 nolint 指令。
+    - nonamedreturns # 报告所有命名的返回。
+    - paralleltest # 检测 Go 测试中缺少 t.Parallel（） 方法的使用。
+    - perfsprint # 检查 fmt.Sprintf 可以替换为更快的替代方案。
+    #      - prealloc   # 查找可能预先分配的切片声明。
+    - predeclared # 查找隐藏 Go 的预声明标识符之一的代码。
+    - promlinter # 通过 promlint 检查 Prometheus 指标命名。
+    - protogetter # 报告在应使用 getter 时直接从 proto 消息字段读取。
+    - reassign # 检查是否未重新分配包变量。
+    - recvcheck # 检查接收方类型是否一致。
+    - revive # 快速、可配置、可扩展、灵活且美观的 Go Linter。golint 的直接替代品。
+    #      - rowserrcheck   # 检查行的 Rows.Err 是否检查成功。
+    #      - sloglint   #确保使用 log/slog 时的代码风格一致。
+    - spancheck # 检查 OpenTelemetry/Census 跨度的错误。
+    - tagalign # 检查 struct 标签是否对齐良好。
+    #      - tagliatelle   # 检查 struct 标记。
+    - testifylint # 检查 github.com/stretchr/testify 的使用情况。
+    - testpackage # Linter 的 linter 使您使用单独的 _test 包。
+    - thelper # Thelper 检测不以 t.Helper（） 方法开头的测试帮助程序。
+    - usestdlibvars # 一个 Linter，用于检测使用 Go 标准库中的变量/常量的可能性。
+    - usetesting # 报告 testing 包中带有 replacement 的函数的使用情况。
+    - unconvert # 删除不必要的类型转换。
+    #      - unparam   # 报告未使用的函数参数。
+    #      - varnamelen   # 检查变量名称的长度是否与其范围匹配。
+    - whitespace # 用于检查函数开头和结尾的不必要换行符，例如 if、for 等。
+    #      - wrapcheck   # 检查从外部包返回的错误是否已包装。
+    #      - wsl   # 添加或删除空行。
+
+    # 不能进行设置的
+    - ineffassign # 检测未使用对现有变量的赋值
+    - asciicheck #检查所有代码标识符的名称中是否不包含非 ASCII 符号。
+    - bodyclose # body关闭    检查 HTTP 响应体是否关闭成功。
+    - canonicalheader # Canonical标头检查 net/http.Header 使用规范 Header。
+    - containedctx # Containedctx 是检测 struct contained context 的 linter。Context 字段。
+    - contextcheck # 检查函数是否使用非继承上下文。
+    - durationcheck # 检查两个 duration 是否相乘。
+    #      - err113   # 检查处理表达式的错误。
+    - errname # 检查 sentinel 错误是否以Err为前缀，错误类型是否以error为后缀
+    - exptostd # 检测 golang.org/x/exp/ 中可替换为 std 函数的函数。
+    - forcetypeassert # 查找强制类型断言。
+    - gocheckcompilerdirectives # 检查 go 编译器指令注释 （//go：） 是否有效。
+    #      - gochecknoglobals   # 检查是否不存在全局变量。
+    - gochecknoinits # 检查 Go 代码中是否存在 init 函数。
+    - goprintffuncname # 检查类似printf的函数是否以f结尾命名。
+    - intrange # 用于查找 for 循环可以使用整数范围的位置。
+    - mirror #  报告字节/字符串使用的错误镜像模式。
+    - nilerr #  查找返回 nil 的代码，即使它检查错误不是 nil。
+    - nilnesserr # Reports 构造检查 err ！= nil，但返回不同的 nil 值错误。 由 nilness 和 nilerr 提供支持。
+    - noctx #   查找不带上下文的发送 http 请求。上下文。
+    - nosprintfhostport # 检查是否滥用 Sprintf 来构造 URL 中包含 port 的主机。
+    - sqlclosecheck # 检查 sql.行、sql。Stmt， sqlx.NamedStmt， pgx.Query 已关闭。
+    - testableexamples # Linter 检查示例是否可测试（具有预期的输出）。
+    - tparallel # 检测 Go 测试代码中 t.Parallel（） 方法的不当使用。
+    - wastedassign # 查找浪费的赋值语句。
+    - zerologlint # 检测用户忘记使用Send或Msg发送的zerolog的错误使用。
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+    - golines
+  settings:
+    golines:
+      # 一行不超过120个字符
+      max-len: 120
+      tab-len: 4
+      shorten-comments: true
+      reformat-tags: true
+      chain-split-dots: false
+  exclusions:
+    warn-unused: true
+
+output:
+  formats:
+    # 文本格式输出， 包含颜色，文件名称，行数和验证器名称
+    text:
+      path: stdout
+      print-linter-name: true
+      print-issued-lines: true
+      colors: true
+
+  sort-order:
+    - linter
+    - severity
+    - file # filepath, line, and column.
+  show-stats: false
+
+run:
+  timeout: 5m
+  relative-path-mode: gomod
+  issues-exit-code: 1
+  tests: false
+
+  modules-download-mode: readonly
+  allow-parallel-runners: true
+  allow-serial-runners: true
+
+severity:
+  default: warning
+  rules:
+    - linters:
+        - dupl
+      severity: info

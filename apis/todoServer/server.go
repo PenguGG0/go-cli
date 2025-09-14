@@ -18,6 +18,7 @@ func replyJSONContent(w http.ResponseWriter, r *http.Request, status int, resp *
 	body, err := json.Marshal(resp)
 	if err != nil {
 		replyError(w, r, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 

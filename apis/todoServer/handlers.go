@@ -22,6 +22,7 @@ func replyTextContent(w http.ResponseWriter, r *http.Request, status int, conten
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
+
 		return
 	}
 
@@ -38,6 +39,7 @@ func todoRouter(todoFile string, l sync.Locker) http.HandlerFunc {
 
 		if err := list.Get(todoFile); err != nil {
 			replyError(w, r, http.StatusInternalServerError, err.Error())
+
 			return
 		}
 	}

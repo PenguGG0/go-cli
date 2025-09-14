@@ -83,7 +83,12 @@ func TestRunHostFound(t *testing.T) {
 			t.Errorf("Got port[%q] %q, expected port[%q] %q\n", i, res[0].PortStates[i].Port, i, ports[i])
 		}
 		if res[0].PortStates[i].Open.String() != tc.expectState {
-			t.Errorf("Got port %q state %q, expected %q\n", ports[i], res[0].PortStates[i].Open.String(), tc.expectState)
+			t.Errorf(
+				"Got port %q state %q, expected %q\n",
+				ports[i],
+				res[0].PortStates[i].Open.String(),
+				tc.expectState,
+			)
 		}
 	}
 }
