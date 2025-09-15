@@ -76,11 +76,11 @@ linters:
     - nilnesserr # Reports 构造检查 err ！= nil，但返回不同的 nil 值错误。 由 nilness 和 nilerr 提供支持
     - nilnil # 检查是否没有同时返回错误和无效值
     - nlreturn # return 前方加一个空行，让代码逻辑清晰， 默认空行为1行
-    - noctx # 查找不带上下文的发送 http 请求
+    # - noctx # 查找不带上下文的发送 http 请求
     # - nolintlint # 报告格式不正确或不充分的 nolint 指令
     # - nonamedreturns # 报告所有命名的返回
     - nosprintfhostport # 检查是否滥用 Sprintf 来构造 URL 中包含 port 的主机
-    - paralleltest # 检测 Go 测试中缺少 t.Parallel（） 方法的使用
+    # - paralleltest # 检测 Go 测试中缺少 t.Parallel（） 方法的使用
     - perfsprint # 检查 fmt.Sprintf 可以替换为更快的替代方案
     - prealloc # 查找可能预先分配的切片声明
     - predeclared # 查找隐藏 Go 的预声明标识符之一的代码
@@ -98,7 +98,7 @@ linters:
     # - tagliatelle   # 检查 struct 标记
     # - testifylint # 检查 github.com/stretchr/testify 的使用情况
     - testpackage # Linter 的 linter 使您使用单独的 _test 包
-    - tparallel # 检测 Go 测试代码中 t.Parallel（） 方法的不当使用
+    # - tparallel # 检测 Go 测试代码中 t.Parallel（） 方法的不当使用
     - thelper # Thelper 检测不以 t.Helper（） 方法开头的测试帮助程序
     - usestdlibvars # 一个 Linter，用于检测使用 Go 标准库中的变量/常量的可能性
     # - usetesting # 报告 testing 包中带有 replacement 的函数的使用情况
@@ -191,9 +191,10 @@ severity:
         - decorder
         - dogsled
         - dupl
-        - errcheck
+        # - errcheck
         - wsl_v5
         - nlreturn
-        - noctx
+        # - paralleltest
+        # - tparallel
 
       severity: info

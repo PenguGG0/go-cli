@@ -13,7 +13,7 @@ type todoResponse struct {
 
 func (r *todoResponse) MarshalJSON() ([]byte, error) {
 	resp := struct {
-		Results      todo.List `json:"result"`
+		Results      todo.List `json:"results"`
 		Date         int64     `json:"date"`
 		TotalResults int       `json:"total_results"`
 	}{

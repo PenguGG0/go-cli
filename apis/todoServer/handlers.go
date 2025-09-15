@@ -146,7 +146,7 @@ func addHandler(w http.ResponseWriter, r *http.Request, list *todo.List, todoFil
 		return
 	}
 
-	replyTextContent(w, r, http.StatusNoContent, "")
+	replyTextContent(w, r, http.StatusCreated, "")
 }
 
 func validateID(path string, list *todo.List) (int, error) {
