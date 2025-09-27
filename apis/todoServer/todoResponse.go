@@ -8,7 +8,7 @@ import (
 )
 
 type todoResponse struct {
-	Results todo.List `json:"results"`
+	Results todo.List `json:"result"`
 }
 
 func (r *todoResponse) MarshalJSON() ([]byte, error) {
